@@ -8,6 +8,16 @@ namespace sngl::core
       IApplication() = default;
       virtual ~IApplication() = default;
 
-      virtual bool run(IEngine* engine) = 0;
+      virtual void onInit(IEngine* engine)
+      {
+         m_engine = engine;
+      }
+
+      virtual void onUpdate() = 0;
+      virtual void onRender() = 0;
+      virtual void onExit() = 0;
+
+   protected:
+      IEngine* m_engine = nullptr;
    }; // IApplication
 } // sngl::core

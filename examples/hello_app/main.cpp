@@ -14,10 +14,25 @@ public:
 
    }
 
-   bool run(sngl::core::IEngine* engine) override
+   void onInit(sngl::core::IEngine* engine) override
    {
-      std::cout << "Hello from app\n";
-      return true;
+      IApplication::onInit(engine);
+      std::cout << "Initializing\n";
+   }
+
+   void onUpdate() override
+   {
+      std::cout << "Updating\n";
+   }
+
+   void onRender() override
+   {
+      std::cout << "Rendering\n";
+   }
+
+   void onExit() override
+   {
+      std::cout << "Exiting\n";
    }
 };
 

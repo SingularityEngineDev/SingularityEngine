@@ -17,11 +17,20 @@ public:
 
    bool runApp(IApplication* app) override
    {
-      return app->run(this);
+      app->onInit(this);
+      while (m_running)
+      {
+         app->onUpdate();
+         app->onRender();
+      }
+      app->onExit();
    }
+
+private:
+   bool m_running = true;
 };
 
 IEngine* sngl::core::CreateEngine()
 {
-   return new CEngine(); // TODO: Smart pointer in this method?
+   return new CEngine();
 }
