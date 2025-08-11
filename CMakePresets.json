@@ -1,0 +1,43 @@
+{
+  "version": 9,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-only",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "rhs": "${hostSystemName}",
+        "lhs": "Windows"
+      }
+    },
+    {
+      "name": "win64-visualstudio-clangcl",
+      "displayName": "Visual Studio generator, ClangCL",
+      "inherits": "windows-only",
+      "generator": "Visual Studio 17 2022",
+      "toolset": "ClangCL",
+      "binaryDir": "${sourceDir}/build/ClangCL"
+    },
+    {
+      "name": "win64-visualstudio-msvc",
+      "displayName": "Visual Studio generator, MSVC",
+      "inherits": "windows-only",
+      "generator": "Visual Studio 17 2022",
+      "toolset": "v143",
+      "binaryDir": "${sourceDir}/build/MSVC"
+    },
+    {
+      "name": "ninja-multiconfig",
+      "displayName": "Ninja genreator, other toolset",
+      "binaryDir": "${sourceDir}/build/ninja"
+    }
+  ],
+  "buildPresets": [
+
+  ]
+}
