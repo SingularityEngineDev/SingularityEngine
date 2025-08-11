@@ -1,3 +1,6 @@
+#ifndef _SNGL_CORE_IAPPLICATION_H_INCLUDED_
+#define _SNGL_CORE_IAPPLICATION_H_INCLUDED_
+
 namespace sngl::core
 {
    class IEngine;
@@ -21,3 +24,5 @@ namespace sngl::core
       IEngine* m_engine = nullptr;
    }; // IApplication
 } // sngl::core
+
+#endif
