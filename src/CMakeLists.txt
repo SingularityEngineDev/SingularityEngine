@@ -1,9 +1,12 @@
 set(SNGL_CORE_SOURCES
-	
- "sngl/core/CEngine.cpp")
+	"sngl/core/CEngine.cpp"
+)
 
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES})
 
+target_link_libraries(SingularityEngine 
+	PRIVATE SDL3::SDL3
+)
 target_include_directories(SingularityEngine PUBLIC "${SNGL_ROOT_PATH}/include")
 
 if (${SNGL_WINDOWS_BUILD})
