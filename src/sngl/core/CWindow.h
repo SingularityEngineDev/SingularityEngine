@@ -3,11 +3,15 @@
 #include <string>
 #include <span>
 #include <unordered_map>
+#include <memory>
 
 #include <sngl/core/IEngine.hpp>
 
 namespace sngl::core
 {
+   struct IEvent;
+   class CEventQueue;
+
    class CWindow
    {
    private:
@@ -28,8 +32,11 @@ namespace sngl::core
       CWindow(const std::string& title);
       ~CWindow();
 
+      void pushWindowEvents(CEventQueue* eventQueue);
+
    private:
       const SDisplay& getPrimaryDisplay();
+      std::unique_ptr<IEvent> translateToSnglEvent(const SDL_Event& e);
 
       const std::string m_title;
       std::unordered_map<SDL_DisplayID, SDisplay> m_displays;

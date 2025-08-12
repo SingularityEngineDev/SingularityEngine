@@ -1,30 +1,30 @@
 #ifndef _SNGL_CORE_CEVENTQUEUE_H_INCLUDED_
 #define _SNGL_CORE_CEVENTQUEUE_H_INCLUDED_
 
-#include <sngl/core/Event.h>
+#include <sngl/core/IEvent.h>
 #include <deque>
+#include <memory>
 
 namespace sngl::core
 {
    class CEventQueue
    {
+   private:
+      using EventPtr = std::unique_ptr<IEvent>;
+
    public:
-      inline void push(const Event& e)
+      inline void push(std::unique_ptr<IEvent> e)
       {
-         m_events.emplace_back(e);
+         m_events.emplace_back(std::move(e));
       }
 
-      inline bool poll(Event& e)
+      inline bool pop(std::unique_ptr<IEvent>& e) 
       {
-         if (m_events.empty())
-            return false;
-
-         e = m_events.front();
+         if (m_events.empty()) return false;
+         e = std::move(m_events.front());
          m_events.pop_front();
          return true;
       }
-
-      void pollWindowEvents();
 
       inline void clear()
       {
@@ -32,7 +32,7 @@ namespace sngl::core
       }
       
    private:
-      std::deque<Event> m_events;
+      std::deque<EventPtr> m_events;
    };
 }
 

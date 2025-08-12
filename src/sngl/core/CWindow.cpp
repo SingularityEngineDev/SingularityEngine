@@ -1,6 +1,11 @@
 #include "CWindow.h"
+#include "CEventQueue.h"
+
+#include "Events/WindowCloseEvent.h"
 
 using CWindow = sngl::core::CWindow;
+using CEventQueue = sngl::core::CEventQueue;
+using IEvent = sngl::core::IEvent;
 
 static constexpr uint32_t DEFAULT_WINDOW_CREATION_FLAGS =
 SDL_WINDOW_RESIZABLE
@@ -52,7 +57,30 @@ CWindow::~CWindow()
 
 }
 
+void CWindow::pushWindowEvents(CEventQueue* eventQueue)
+{
+   SDL_Event e;
+   while (SDL_PollEvent(&e))
+   {
+      auto snglEvent = translateToSnglEvent(e);
+      if (!snglEvent)
+         continue;
+      eventQueue->push(std::move(snglEvent));
+   }
+}
+
 const CWindow::SDisplay& CWindow::getPrimaryDisplay()
 {
    return m_displays[SDL_GetPrimaryDisplay()];
+}
+
+std::unique_ptr<IEvent> CWindow::translateToSnglEvent(const SDL_Event& e)
+{
+   switch (e.type)
+   {
+   case SDL_EVENT_QUIT:
+      return std::make_unique<events::WindowCloseEvent>();
+   default:
+      return nullptr;
+   }
 }

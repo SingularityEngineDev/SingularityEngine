@@ -3,8 +3,8 @@ set(SNGL_CORE_SOURCES
 	"sngl/core/CWindow.h" 
 	"sngl/core/CWindow.cpp" 
 	"sngl/core/CEventQueue.h" 
-	"sngl/core/CEventQueue.cpp"
-)
+	
+ "sngl/core/Events/WindowCloseEvent.h" "sngl/core/CEventDispatcher.h" "sngl/core/CEventDispatcher.cpp")
 
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES})
 
