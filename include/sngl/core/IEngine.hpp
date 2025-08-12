@@ -7,6 +7,7 @@ namespace sngl::core
 {
    class IApplication;
    class IEventDispatcher;
+   class IWindow;
 
    class IEngine
    {
@@ -18,6 +19,7 @@ namespace sngl::core
       virtual void exit() = 0;
 
       virtual IEventDispatcher& getEventDispatcher() = 0;
+      virtual IWindow& getWindow() = 0;
    };
 
    SNGL_API IEngine* CreateEngine();

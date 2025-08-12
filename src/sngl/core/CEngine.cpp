@@ -50,6 +50,11 @@ public:
       return m_eventDispatcher;
    }
 
+   IWindow& getWindow() override
+   {
+      return *m_window;
+   }
+
 private:
    inline void init()
    {

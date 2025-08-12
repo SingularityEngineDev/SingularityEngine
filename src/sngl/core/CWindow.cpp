@@ -69,6 +69,17 @@ void CWindow::pushWindowEvents(CEventQueue* eventQueue)
    }
 }
 
+void CWindow::setTitle(const std::string_view title)
+{
+   m_title = title;
+   SDL_SetWindowTitle(m_handle, m_title.c_str());
+}
+
+const std::string_view CWindow::getTitle() const
+{
+   return m_title;
+}
+
 const CWindow::SDisplay& CWindow::getPrimaryDisplay()
 {
    return m_displays[SDL_GetPrimaryDisplay()];

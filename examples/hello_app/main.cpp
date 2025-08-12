@@ -17,6 +17,7 @@ public:
    void onInit(sngl::core::IEngine* engine) override
    {
       IApplication::onInit(engine);
+      m_engine->getWindow().setTitle("Hello App");
       std::cout << "Initializing\n";
    }
 

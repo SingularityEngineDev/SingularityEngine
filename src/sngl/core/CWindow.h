@@ -1,18 +1,20 @@
 #include <SDL3/SDL.h>
 
+#include <sngl/core/IEngine.hpp>
+#include <sngl/core/IWindow.h>
+
 #include <string>
 #include <span>
 #include <unordered_map>
 #include <memory>
 
-#include <sngl/core/IEngine.hpp>
 
 namespace sngl::core
 {
    struct IEvent;
    class CEventQueue;
 
-   class CWindow
+   class CWindow : public IWindow
    {
    private:
       struct SDisplay
@@ -34,11 +36,14 @@ namespace sngl::core
 
       void pushWindowEvents(CEventQueue* eventQueue);
 
+      void setTitle(const std::string_view title) override;
+      const std::string_view getTitle() const override;
+
    private:
       const SDisplay& getPrimaryDisplay();
       std::unique_ptr<IEvent> translateToSnglEvent(const SDL_Event& e);
 
-      const std::string m_title;
+      std::string m_title;
       std::unordered_map<SDL_DisplayID, SDisplay> m_displays;
 
       SDL_Window* m_handle;
