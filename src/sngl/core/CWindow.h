@@ -1,6 +1,5 @@
 #include <SDL3/SDL.h>
 
-#include <sngl/core/IEngine.hpp>
 #include <sngl/core/IWindow.h>
 
 #include <string>

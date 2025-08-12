@@ -1,5 +1,5 @@
-#ifndef _SNGL_CORE_EVENT_H_INCLUDED_
-#define _SNGL_CORE_EVENT_H_INCLUDED_
+#ifndef _SNGL_CORE_IEVENT_H_INCLUDED_
+#define _SNGL_CORE_IEVENT_H_INCLUDED_
 
 #include <stdint.h>
 

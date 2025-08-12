@@ -1,5 +1,5 @@
-#include <sngl/core/IEngine.hpp>
-#include <sngl/core/IApplication.hpp>
+#include <sngl/core/IEngine.h>
+#include <sngl/core/IApplication.h>
 
 #include "CWindow.h"
 #include "CEventQueue.h"
