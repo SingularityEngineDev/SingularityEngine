@@ -23,6 +23,7 @@ endif()
 
 if (${SNGL_WINDOWS_BUILD})
 	target_compile_definitions(SingularityEngine PRIVATE SNGL_WINDOWS_BUILD)
+	target_link_libraries(SingularityEngine PRIVATE dxgi.lib d3d11.lib d3d12.lib dxguid.lib d3dcompiler.lib)
 endif()
 
 target_compile_definitions(SingularityEngine PRIVATE SNGL_EXPORT)
