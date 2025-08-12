@@ -27,7 +27,7 @@ namespace sngl::core
    struct IEvent;
    class CEventQueue;
 
-   class CWindow : public IWindow
+   class CWindow final : public IWindow
    {
    private:
       struct SDisplay
@@ -52,12 +52,18 @@ namespace sngl::core
       void setTitle(const std::string_view title) override;
       const std::string_view getTitle() const override;
 
+      void setSize(const uint32_t width, const uint32_t height) override;
+      uint32_t getWidth() const override { return m_width; }
+      uint32_t getHeight() const override { return m_height; }
+
    private:
       const SDisplay& getPrimaryDisplay();
       std::unique_ptr<IEvent> translateToSnglEvent(const SDL_Event& e);
 
       std::string m_title;
       std::unordered_map<SDL_DisplayID, SDisplay> m_displays;
+
+      uint32_t m_width, m_height;
 
       SDL_Window* m_handle;
    };

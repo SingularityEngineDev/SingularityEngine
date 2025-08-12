@@ -18,17 +18,14 @@ public:
    {
       IApplication::onInit(engine);
       m_engine->getWindow().setTitle("Hello App");
-      std::cout << "Initializing\n";
    }
 
    void onUpdate() override
    {
-      std::cout << "Updating\n";
    }
 
    void onRender() override
    {
-      std::cout << "Rendering\n";
    }
 
    void onExit() override

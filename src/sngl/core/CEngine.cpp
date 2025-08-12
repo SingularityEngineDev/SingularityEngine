@@ -15,10 +15,12 @@
 #include <sngl/core/IEngine.h>
 #include <sngl/core/IApplication.h>
 
+#include <iostream>
+
 #include "CWindow.h"
 #include "CEventQueue.h"
 #include "CEventDispatcher.h"
-#include "Events/WindowCloseEvent.h"
+#include "Events/WindowEvents.h"
 
 using namespace sngl::core;
 
@@ -105,8 +107,13 @@ private:
       // clever trick to compare the pointers instead of strings that improves performance significantly
       // I think I don't need to explain how it works, do I?
       // O(1) vs O(string length)
-      if (event.getName() == events::WINDOWCLOSE_EVENT_NAME)
+      if (event.getName() == events::WindowCloseEvent::EVENT_NAME)
          exit();
+      else if (event.getName() == events::WindowResizeEvent::EVENT_NAME)
+      {
+         auto& resizeEvent = reinterpret_cast<const events::WindowResizeEvent&>(event);
+         std::cout << "Window resized to (" << resizeEvent.w << ", " << resizeEvent.h << ")\n";
+      }
    }
 };
 

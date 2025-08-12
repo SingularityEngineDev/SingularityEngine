@@ -4,7 +4,7 @@ set(SNGL_CORE_SOURCES
 	"sngl/core/CWindow.cpp" 
 	"sngl/core/CEventQueue.h" 
 	
- "sngl/core/Events/WindowCloseEvent.h" "sngl/core/CEventDispatcher.h" "sngl/core/CEventDispatcher.cpp")
+ "sngl/core/Events/WindowEvents.h" "sngl/core/CEventDispatcher.h" "sngl/core/CEventDispatcher.cpp")
 
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES})
 

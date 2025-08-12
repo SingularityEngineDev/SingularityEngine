@@ -19,12 +19,26 @@
 
 namespace sngl::core::events
 {
-   constexpr const char* WINDOWCLOSE_EVENT_NAME = "WindowCloseEvent";
-
    struct WindowCloseEvent final : public IEvent
    {
+      static constexpr const char* EVENT_NAME = "WindowCloseEvent";
+
       EventCategory getCategory() const override { return EventCategory::EC_CORE; }
-      inline const char* getName() const override { return WINDOWCLOSE_EVENT_NAME; }
+      inline const char* getName() const override { return EVENT_NAME; }
+   };
+
+   struct WindowResizeEvent final : public IEvent
+   {
+      static constexpr const char* EVENT_NAME = "WindowResizeEvent";
+
+      EventCategory getCategory() const override { return EventCategory::EC_CORE; }
+      inline const char* getName() const override { return EVENT_NAME; }
+
+      inline WindowResizeEvent(uint32_t w, uint32_t h) 
+         : w(w), h(h) 
+      { }
+
+      uint32_t w, h;
    };
 }
 

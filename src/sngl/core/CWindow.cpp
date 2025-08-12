@@ -15,7 +15,7 @@
 #include "CWindow.h"
 #include "CEventQueue.h"
 
-#include "Events/WindowCloseEvent.h"
+#include "Events/WindowEvents.h"
 
 using CWindow = sngl::core::CWindow;
 using CEventQueue = sngl::core::CEventQueue;
@@ -99,12 +99,21 @@ const CWindow::SDisplay& CWindow::getPrimaryDisplay()
    return m_displays[SDL_GetPrimaryDisplay()];
 }
 
+void CWindow::setSize(uint32_t width, uint32_t height)
+{
+   SDL_SetWindowSize(m_handle, width, height);
+   m_width = width;
+   m_height = height;
+}
+
 std::unique_ptr<IEvent> CWindow::translateToSnglEvent(const SDL_Event& e)
 {
    switch (e.type)
    {
    case SDL_EVENT_QUIT:
       return std::make_unique<events::WindowCloseEvent>();
+   case SDL_EVENT_WINDOW_RESIZED:
+      return std::make_unique<events::WindowResizeEvent>(e.window.data1, e.window.data2);
    default:
       return nullptr;
    }

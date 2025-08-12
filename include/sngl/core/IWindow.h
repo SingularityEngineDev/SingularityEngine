@@ -26,6 +26,9 @@ namespace sngl::core
 
       virtual void setTitle(const std::string_view title) = 0;
       virtual const std::string_view getTitle() const = 0;
+      virtual void setSize(const uint32_t width, const uint32_t height) = 0;
+      virtual uint32_t getWidth() const = 0;
+      virtual uint32_t getHeight() const = 0;
    };
 }
 
