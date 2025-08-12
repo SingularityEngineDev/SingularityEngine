@@ -1,4 +1,4 @@
-#include <Singularity.hpp>
+#include <Singularity.h>
 #include <iostream>
 
 class HelloApp final : public sngl::core::IApplication
