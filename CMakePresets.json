@@ -15,7 +15,8 @@
         "lhs": "Windows"
       },
       "cacheVariables": {
-        "SNGL_WINDOWS_BUILD": true
+        "SNGL_WINDOWS_BUILD": true,
+        "SNGL_DYNAMIC_RUNTIME": true
       }
     },
     {

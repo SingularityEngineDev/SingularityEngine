@@ -5,6 +5,19 @@ project(SingularityEngine LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo;MinSizeRel" CACHE STRING "" FORCE)
+if (NOT CMAKE_CONFIGURATION_TYPES)
+	set(SNGL_DEFAULT_BUILD_TYPE "Debug")
+
+	if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+		message(STATUS "Build type set to '${SNGL_DEFAULT_BUILD_TYPE}' because none was specified")
+		set(CMAKE_BUILD_TYPE "${SNGL_DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the build type" FORCE)
+		set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
+	endif()
+endif()
+
+option(SNGL_DYNAMIC_RUNTIME "Use dynamic runtime" OFF)
+
 get_filename_component(SNGL_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 
 add_subdirectory(3rdparty)
