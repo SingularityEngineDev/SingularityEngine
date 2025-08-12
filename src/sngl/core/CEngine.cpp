@@ -1,6 +1,7 @@
 #include <sngl/core/IEngine.hpp>
 
 #include "CWindow.h"
+#include "CEventQueue.h"
 
 using namespace sngl::core;
 
@@ -34,7 +35,15 @@ public:
 
    void update(IApplication* app)
    {
-      m_window->handleEvents(this);
+      m_queue.pollWindowEvents();
+
+      Event e;
+      while (m_queue.poll(e))
+      {
+         if (e.type == EngineEventType::WindowClose)
+            m_running = false;
+      }
+
       app->onUpdate();
    }
 
@@ -50,6 +59,7 @@ public:
 
 private:
    CWindow* m_window;
+   CEventQueue m_queue;
    bool m_running = true;
 };
 

@@ -1,6 +1,10 @@
 set(SNGL_CORE_SOURCES
 	"sngl/core/CEngine.cpp"
- "sngl/core/CWindow.h" "sngl/core/CWindow.cpp")
+	"sngl/core/CWindow.h" 
+	"sngl/core/CWindow.cpp" 
+	"sngl/core/CEventQueue.h" 
+	"sngl/core/CEventQueue.cpp"
+)
 
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES})
 

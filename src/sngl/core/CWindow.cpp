@@ -56,13 +56,3 @@ const CWindow::SDisplay& CWindow::getPrimaryDisplay()
 {
    return m_displays[SDL_GetPrimaryDisplay()];
 }
-
-void CWindow::handleEvents(IEngine* engine)
-{
-   SDL_Event event;
-   while (SDL_PollEvent(&event))
-   {
-      if (event.type == SDL_EVENT_QUIT)
-         engine->exit();
-   }
-}

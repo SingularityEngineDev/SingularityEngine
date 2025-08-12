@@ -28,9 +28,6 @@ namespace sngl::core
       CWindow(const std::string& title);
       ~CWindow();
 
-      // NOTE: probably temp until real event system gets implemented
-      void handleEvents(IEngine* engine);
-
    private:
       const SDisplay& getPrimaryDisplay();
 
