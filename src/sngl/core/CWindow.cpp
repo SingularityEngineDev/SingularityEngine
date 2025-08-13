@@ -50,9 +50,6 @@ CWindow::CWindow(const std::string& title)
       auto* displays = SDL_GetDisplays(&displayCount);
       m_displays.reserve(displayCount);
 
-      if (!displays) {}
-         // TODO: throw error
-
       // get them to span for ez iteration
       auto rawDisplays = std::span<SDL_DisplayID>(displays, displays + displayCount);
 
@@ -85,8 +82,9 @@ void CWindow::pushWindowEvents(CEventQueue* eventQueue)
 
 void CWindow::setTitle(const std::string_view title)
 {
+   if (!SDL_SetWindowTitle(m_handle, m_title.c_str()))
+      return;
    m_title = title;
-   SDL_SetWindowTitle(m_handle, m_title.c_str());
 }
 
 const std::string_view CWindow::getTitle() const
@@ -101,7 +99,9 @@ const CWindow::SDisplay& CWindow::getPrimaryDisplay()
 
 void CWindow::setSize(uint32_t width, uint32_t height)
 {
-   SDL_SetWindowSize(m_handle, width, height);
+   if (!SDL_SetWindowSize(m_handle, width, height))
+      return;
+
    m_width = width;
    m_height = height;
 }
