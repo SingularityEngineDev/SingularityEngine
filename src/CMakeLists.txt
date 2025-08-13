@@ -9,7 +9,7 @@ set(SNGL_CORE_SOURCES
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES})
 
 target_link_libraries(SingularityEngine 
-	PRIVATE SDL3::SDL3
+	PRIVATE SDL3::SDL3 spdlog::spdlog
 )
 target_include_directories(SingularityEngine PUBLIC "${SNGL_ROOT_PATH}/include")
 
