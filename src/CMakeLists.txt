@@ -4,7 +4,7 @@ set(SNGL_CORE_SOURCES
 	"sngl/core/CWindow.cpp" 
 	"sngl/core/CEventQueue.h" 
 	
- "sngl/core/Events/WindowEvents.h" "sngl/core/CEventDispatcher.h" "sngl/core/CEventDispatcher.cpp")
+ "sngl/core/Events/WindowEvents.h" "sngl/core/CEventDispatcher.h" "sngl/core/CEventDispatcher.cpp" "sngl/core/CSpdlogLogger.h" "sngl/core/CSpdlogLogger.cpp")
 
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES})
 
@@ -26,4 +26,7 @@ if (${SNGL_WINDOWS_BUILD})
 	target_link_libraries(SingularityEngine PRIVATE dxgi.lib d3d11.lib d3d12.lib dxguid.lib d3dcompiler.lib)
 endif()
 
-target_compile_definitions(SingularityEngine PRIVATE SNGL_EXPORT)
+target_compile_definitions(SingularityEngine 
+	PRIVATE SNGL_EXPORT
+	PUBLIC "$<$<CONFIG:Debug>:SNGL_DEBUG>"
+)

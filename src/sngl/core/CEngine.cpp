@@ -20,6 +20,8 @@
 #include "CWindow.h"
 #include "CEventQueue.h"
 #include "CEventDispatcher.h"
+#include "CSpdlogLogger.h"
+
 #include "Events/WindowEvents.h"
 
 using namespace sngl::core;
@@ -28,9 +30,10 @@ class CEngine final : public IEngine
 {
 private:
    IApplication* m_currentApplication;
-   CWindow* m_window;
+   std::unique_ptr<CWindow> m_window;
    CEventQueue m_queue;
    CEventDispatcher m_eventDispatcher;
+   std::unique_ptr<CSpdlogLogger> m_systemLogger;
    bool m_running = true;
 
 public:
@@ -57,7 +60,6 @@ public:
       
       // cleanup
       m_currentApplication = nullptr;
-      delete m_window;
       return true;
    }
 
@@ -74,7 +76,11 @@ public:
 private:
    inline void init()
    {
-      m_window = new CWindow("Singularity Engine");
+      m_systemLogger = std::make_unique<CSpdlogLogger>("Singularity-System");
+#ifdef SNGL_DEBUG
+      m_systemLogger->log(ILogger::ELL_INFO, "System logger created!");
+#endif
+      m_window = std::make_unique<CWindow>("Singularity Engine");
       m_eventDispatcher.subscribe(IEvent::EC_CORE, [this](const IEvent& e) { coreEventCallback(e); });
       m_currentApplication->onInit(this);
    }
