@@ -4,6 +4,7 @@ class HelloApp final : public sngl::core::IApplication
 {
 private:
     using Logger_t = sngl::core::ILogger;
+    using Event_t = sngl::core::IEvent;
 
     std::unique_ptr<Logger_t> m_gameLogger;
 public:
@@ -13,6 +14,9 @@ public:
       m_engine->getWindow().setTitle("Hello App");
       m_gameLogger = m_engine->createLogger("HelloApp");
       m_gameLogger->log(Logger_t::ELL_INFO, "Game logger created!");
+
+      // some event system demo
+      m_engine->getEventDispatcher().subscribe(sngl::core::IEvent::EC_CORE, [this](const Event_t& event) { onCoreEvent(event); });
    }
 
    void onUpdate() override
@@ -26,6 +30,11 @@ public:
    void onExit() override
    {
        m_gameLogger->log(Logger_t::ELL_INFO, "Exiting");
+   }
+
+   void onCoreEvent(const sngl::core::IEvent& event)
+   {
+       m_gameLogger->log(Logger_t::ELL_INFO, "Event caputured: %s", event.getName());
    }
 };
 
