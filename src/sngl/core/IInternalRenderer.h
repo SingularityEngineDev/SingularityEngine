@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sngl/core/ILogger.h>
+#ifndef _SNGL_CORE_IINTERNALRENDERER_H_INCLUDED_
+#define _SNGL_CORE_IINTERNALRENDERER_H_INCLUDED_
+
+#include <sngl/core/IRenderer.h>
 
 namespace sngl::core
 {
-   class CSpdlogLogger final : public ILogger
-   {
-   public:
-      CSpdlogLogger(const std::string& loggerName);
-      ~CSpdlogLogger();
+	class IInternalRenderer : public IRenderer
+	{
+	public:
+		virtual ~IInternalRenderer() = default;
 
-   protected:
-      void logImpl(ELogLevel level, const char* fmt, va_list args) override;
-
-   private:
-      static std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> s_conSink;
-
-      std::shared_ptr<spdlog::sinks::basic_file_sink_mt> m_fileSink;
-      std::unique_ptr<spdlog::logger> m_logger;
-   };
+		virtual void initialize() = 0;
+		virtual void beginFrame() = 0;
+		virtual void endFrame() = 0;
+		virtual void present() = 0;
+	};
 }
+
+#endif
