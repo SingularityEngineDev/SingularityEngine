@@ -16,12 +16,15 @@
 #define _SNGL_CORE_IENGINE_H_INCLUDED_
 
 #include <sngl/definitions.h>
+#include <string>
+#include <memory>
 
 namespace sngl::core
 {
    class IApplication;
    class IEventDispatcher;
    class IWindow;
+   class ILogger;
 
    class IEngine
    {
@@ -34,6 +37,8 @@ namespace sngl::core
 
       virtual IEventDispatcher& getEventDispatcher() = 0;
       virtual IWindow& getWindow() = 0;
+
+      virtual std::unique_ptr<ILogger> createLogger(const std::string& name) = 0;
    };
 
    SNGL_API IEngine* CreateEngine();

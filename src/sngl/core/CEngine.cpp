@@ -15,7 +15,7 @@
 #include <sngl/core/IEngine.h>
 #include <sngl/core/IApplication.h>
 
-#include <iostream>
+#include <unordered_map>
 
 #include "CWindow.h"
 #include "CEventQueue.h"
@@ -33,8 +33,10 @@ private:
    std::unique_ptr<CWindow> m_window;
    CEventQueue m_queue;
    CEventDispatcher m_eventDispatcher;
-   std::unique_ptr<CSpdlogLogger> m_systemLogger;
    bool m_running = true;
+
+   std::unique_ptr<CSpdlogLogger> m_systemLogger;
+   std::unordered_map<std::string, std::shared_ptr<ILogger>> m_loggerStore;
 
 public:
    CEngine()
@@ -71,6 +73,11 @@ public:
    IWindow& getWindow() override
    {
       return *m_window;
+   }
+
+   std::unique_ptr<ILogger> createLogger(const std::string& name) override
+   {
+       return std::make_unique<CSpdlogLogger>(name);
    }
 
 private:
@@ -115,11 +122,6 @@ private:
       // O(1) vs O(string length)
       if (event.getName() == events::WindowCloseEvent::EVENT_NAME)
          exit();
-      else if (event.getName() == events::WindowResizeEvent::EVENT_NAME)
-      {
-         auto& resizeEvent = reinterpret_cast<const events::WindowResizeEvent&>(event);
-         std::cout << "Window resized to (" << resizeEvent.w << ", " << resizeEvent.h << ")\n";
-      }
    }
 };
 

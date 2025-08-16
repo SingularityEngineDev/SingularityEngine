@@ -3,6 +3,10 @@
 
 class HelloApp final : public sngl::core::IApplication
 {
+private:
+    using Logger_t = sngl::core::ILogger;
+
+    std::unique_ptr<Logger_t> m_gameLogger;
 public:
    HelloApp()
    {
@@ -18,6 +22,8 @@ public:
    {
       IApplication::onInit(engine);
       m_engine->getWindow().setTitle("Hello App");
+      m_gameLogger = m_engine->createLogger("HelloApp");
+      m_gameLogger->log(Logger_t::ELL_INFO, "Game logger created!");
    }
 
    void onUpdate() override
