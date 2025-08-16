@@ -12,15 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <SDL3/SDL.h>
-
 #include <sngl/core/IWindow.h>
-
-#include <string>
-#include <span>
-#include <unordered_map>
-#include <memory>
-
 
 namespace sngl::core
 {

@@ -16,8 +16,6 @@
 #define _SNGL_CORE_CEVENTQUEUE_H_INCLUDED_
 
 #include <sngl/core/IEvent.h>
-#include <deque>
-#include <memory>
 
 namespace sngl::core
 {

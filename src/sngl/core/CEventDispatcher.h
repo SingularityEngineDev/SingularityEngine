@@ -17,9 +17,6 @@
 
 #include <sngl/core/IEventDispatcher.h>
 
-#include <vector>
-#include <unordered_map>
-
 namespace sngl::core
 {
    class CEventDispatcher : public IEventDispatcher

@@ -15,8 +15,6 @@
 #ifndef _SNGL_CORE_IWINDOW_H_INCLUDED_
 #define _SNGL_CORE_IWINDOW_H_INCLUDED_
 
-#include <string>
-
 namespace sngl::core
 {
    class IWindow

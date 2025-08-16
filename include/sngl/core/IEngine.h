@@ -16,8 +16,6 @@
 #define _SNGL_CORE_IENGINE_H_INCLUDED_
 
 #include <sngl/definitions.h>
-#include <string>
-#include <memory>
 
 namespace sngl::core
 {

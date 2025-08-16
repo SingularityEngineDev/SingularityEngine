@@ -16,7 +16,6 @@
 #define _SNGL_CORE_IEVENTDISPATCHER_H_INCLUDED_
 
 #include <sngl/core/IEvent.h>
-#include <functional>
 
 namespace sngl::core
 {

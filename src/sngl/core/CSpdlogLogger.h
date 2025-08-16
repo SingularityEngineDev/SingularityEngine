@@ -1,11 +1,5 @@
 #include <sngl/core/ILogger.h>
 
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-
-#include <memory>
-
 namespace sngl::core
 {
    class CSpdlogLogger final : public ILogger

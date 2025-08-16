@@ -2,11 +2,16 @@ set(SNGL_CORE_SOURCES
 	"sngl/core/CEngine.cpp"
 	"sngl/core/CWindow.h" 
 	"sngl/core/CWindow.cpp" 
-	"sngl/core/CEventQueue.h" 
+	"sngl/core/CEventQueue.h"
+	"sngl/core/Events/WindowEvents.h" 
+	"sngl/core/CEventDispatcher.h" 
+	"sngl/core/CEventDispatcher.cpp" 
+	"sngl/core/CSpdlogLogger.h" 
+	"sngl/core/CSpdlogLogger.cpp"
 	
- "sngl/core/Events/WindowEvents.h" "sngl/core/CEventDispatcher.h" "sngl/core/CEventDispatcher.cpp" "sngl/core/CSpdlogLogger.h" "sngl/core/CSpdlogLogger.cpp")
+)
 
-add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES})
+add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES} "sngl/pch.cpp")
 
 target_link_libraries(SingularityEngine 
 	PRIVATE SDL3::SDL3 spdlog::spdlog
@@ -29,4 +34,9 @@ endif()
 target_compile_definitions(SingularityEngine 
 	PRIVATE SNGL_EXPORT
 	PUBLIC "$<$<CONFIG:Debug>:SNGL_DEBUG>"
+)
+
+target_precompile_headers(SingularityEngine
+	PUBLIC "${SNGL_ROOT_PATH}/include/sngl/pch.h"
+	PRIVATE "sngl/core/pch.h"
 )

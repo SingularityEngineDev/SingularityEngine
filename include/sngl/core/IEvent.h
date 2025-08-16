@@ -15,8 +15,6 @@
 #ifndef _SNGL_CORE_IEVENT_H_INCLUDED_
 #define _SNGL_CORE_IEVENT_H_INCLUDED_
 
-#include <stdint.h>
-
 namespace sngl::core
 {
    struct IEvent

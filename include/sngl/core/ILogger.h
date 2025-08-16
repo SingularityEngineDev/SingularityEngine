@@ -1,9 +1,6 @@
 #ifndef _SNGL_CORE_ILOGGER_H_INCLUDED_
 #define _SNGL_CORE_ILOGGER_H_INCLUDED_
 
-#include <string>
-#include <cstdarg>
-
 namespace sngl::core
 {
    class ILogger
