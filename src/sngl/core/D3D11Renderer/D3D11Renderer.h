@@ -31,8 +31,9 @@ namespace sngl::core::d3d11
 		template <typename T>
 		using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-		ComPtr<IDXGIFactory> m_factory;
+		ComPtr<IDXGIFactory7> m_factory;
 	public:
+		D3D11Renderer() = default;
 		~D3D11Renderer() = default;
 
 		void initialize() override;

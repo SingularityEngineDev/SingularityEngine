@@ -9,7 +9,7 @@ set(SNGL_CORE_SOURCES
 	"sngl/core/CSpdlogLogger.h" 
 	"sngl/core/CSpdlogLogger.cpp"
 	
- "sngl/core/IInternalRenderer.h" "sngl/core/D3D11Renderer/D3D11Renderer.h" "sngl/core/D3D11Renderer/D3D11Renderer.cpp")
+ "sngl/core/IInternalRenderer.h" "sngl/core/D3D11Renderer/D3D11Renderer.h" "sngl/core/D3D11Renderer/D3D11Renderer.cpp" "sngl/core/RendererFactory.h" "sngl/core/RendererFactory.cpp")
 
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES} "sngl/pch.cpp")
 

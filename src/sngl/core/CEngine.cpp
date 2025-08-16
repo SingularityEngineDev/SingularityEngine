@@ -21,6 +21,7 @@
 #include "CEventQueue.h"
 #include "CEventDispatcher.h"
 #include "CSpdlogLogger.h"
+#include "RendererFactory.h"
 
 #include "Events/WindowEvents.h"
 
@@ -36,7 +37,7 @@ private:
    bool m_running = true;
 
    std::unique_ptr<CSpdlogLogger> m_systemLogger;
-   std::unordered_map<std::string, std::shared_ptr<ILogger>> m_loggerStore;
+   std::unique_ptr<IInternalRenderer> m_renderer;
 
 public:
    CEngine()
@@ -89,6 +90,8 @@ private:
 #endif
       m_window = std::make_unique<CWindow>("Singularity Engine");
       m_eventDispatcher.subscribe(IEvent::EC_CORE, [this](const IEvent& e) { coreEventCallback(e); });
+      m_renderer = RendererFactory::CreateRecommendedRenderer();
+      m_renderer->initialize();
       m_currentApplication->onInit(this);
    }
 

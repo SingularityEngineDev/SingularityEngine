@@ -15,11 +15,9 @@
 #ifndef _SNGL_CORE_IINTERNALRENDERER_H_INCLUDED_
 #define _SNGL_CORE_IINTERNALRENDERER_H_INCLUDED_
 
-#include <sngl/core/IRenderer.h>
-
 namespace sngl::core
 {
-	class IInternalRenderer : public IRenderer
+	class IInternalRenderer
 	{
 	public:
 		virtual ~IInternalRenderer() = default;
