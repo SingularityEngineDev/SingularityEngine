@@ -1,5 +1,4 @@
 #include <Singularity.h>
-#include <iostream>
 
 class HelloApp final : public sngl::core::IApplication
 {
@@ -8,16 +7,6 @@ private:
 
     std::unique_ptr<Logger_t> m_gameLogger;
 public:
-   HelloApp()
-   {
-
-   }
-
-   ~HelloApp() override
-   {
-
-   }
-
    void onInit(sngl::core::IEngine* engine) override
    {
       IApplication::onInit(engine);
@@ -36,7 +25,7 @@ public:
 
    void onExit() override
    {
-      std::cout << "Exiting\n";
+       m_gameLogger->log(Logger_t::ELL_INFO, "Exiting");
    }
 };
 

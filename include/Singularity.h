@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <sngl/pch.h>
 #include <sngl/definitions.h>
 #include <sngl/core/IApplication.h>
 #include <sngl/core/IEventDispatcher.h>
