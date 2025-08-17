@@ -35,12 +35,17 @@ namespace sngl::core::d3d11
 		using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 		IEngine* m_engine;
+		IWindow& m_window;
 		std::unique_ptr<ILogger> m_logger;
 		ComPtr<IDXGIFactory7> m_factory;
 		ComPtr<ID3D11Device> m_device;
-		ComPtr<ID3D11DeviceContext> m_deviceContext;
+		ComPtr<ID3D11DeviceContext> m_context;
 
 		ComPtr<IDXGISwapChain1> m_swapchain;
+
+		// render targets
+		// TODO: triple buffering?
+		ComPtr<ID3D11RenderTargetView> m_backBufferRtv;
 
 	public:
 		D3D11Renderer(IEngine* engine);

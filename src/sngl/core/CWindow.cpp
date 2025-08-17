@@ -61,6 +61,9 @@ CWindow::CWindow(const std::string& title)
 
    const auto& primaryDisplay = getPrimaryDisplay();
    m_handle = SDL_CreateWindow(title.c_str(), primaryDisplay.width, primaryDisplay.height, DEFAULT_WINDOW_CREATION_FLAGS);
+
+   m_width = primaryDisplay.width;
+   m_height = primaryDisplay.height;
 }
 
 CWindow::~CWindow()
@@ -104,13 +107,6 @@ void CWindow::setSize(uint32_t width, uint32_t height)
 
    m_width = width;
    m_height = height;
-}
-
-NATIVE_WINDOW_HANDLE CWindow::getNativeWindowHandle() const
-{
-    auto propertiesId = SDL_GetWindowProperties(m_handle);
-    
-    return reinterpret_cast<NATIVE_WINDOW_HANDLE>(SDL_GetPropertyType(propertiesId, WINDOW_HANDLE_SDL_PROPERTY_TYPE));
 }
 
 std::unique_ptr<IEvent> CWindow::translateToSnglEvent(const SDL_Event& e)

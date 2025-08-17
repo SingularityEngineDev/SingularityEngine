@@ -18,13 +18,9 @@
 #ifdef SNGL_WINDOWS_BUILD
     #define WIN32_LEAN_AND_MEAN
     #include <Windows.h>
-
-    #define NATIVE_WINDOW_HANDLE HWND
-    #define WINDOW_HANDLE_SDL_PROPERTY_TYPE SDL_PROP_WINDOW_WIN32_HWND_POINTER
-
 #else
-    #define NATIVE_WINDOW_HANDLE void*
-    #define WINDOW_HANDLE_SDL_PROPERTY_TYPE ""
+    #define SNGL_NATIVE_WINDOW_HANDLE void*
+    #define SNGL_WINDOW_HANDLE_SDL_PROPERTY_TYPE ""
 #endif
 
 namespace sngl::core
@@ -61,7 +57,18 @@ namespace sngl::core
       uint32_t getWidth() const override { return m_width; }
       uint32_t getHeight() const override { return m_height; }
 
-      NATIVE_WINDOW_HANDLE getNativeWindowHandle() const;
+      template <typename T>
+      T getNativeWindowHandle() const;
+
+      template <>
+      HWND getNativeWindowHandle() const
+      {
+          HWND hwnd = (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+          if (!hwnd)
+              assert(false);
+
+          return hwnd;
+      }
 
    private:
       const SDisplay& getPrimaryDisplay();

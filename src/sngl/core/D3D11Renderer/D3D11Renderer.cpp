@@ -22,7 +22,9 @@
 
 using D3D11Renderer = sngl::core::d3d11::D3D11Renderer;
 
-D3D11Renderer::D3D11Renderer(IEngine* engine) : m_engine(engine)
+D3D11Renderer::D3D11Renderer(IEngine* engine) 
+	: m_engine(engine),
+	m_window(m_engine->getWindow())
 {
 	m_logger = m_engine->createLogger("Singularity-D3D11Renderer");
 }
@@ -77,41 +79,57 @@ bool D3D11Renderer::initialize()
 		D3D11_SDK_VERSION,
 		&m_device,
 		&featureLevel,
-		&m_deviceContext
+		&m_context
 	)))
 	{
 		m_logger->log(ILogger::ELL_CRITICAL, "Failed to create D3D11 Device!");
 		return false;
 	}
 
-	auto& window = reinterpret_cast<CWindow&>(m_engine->getWindow());
+	auto& window = dynamic_cast<CWindow&>(m_window);
 
 	DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
 	swapchainDesc.Width = window.getWidth();
 	swapchainDesc.Height = window.getHeight();
-	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_SNORM;
+	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapchainDesc.Stereo = FALSE;
 	swapchainDesc.SampleDesc.Count = 1;
 	swapchainDesc.SampleDesc.Quality = 0;
 	swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapchainDesc.BufferCount = 2; // TODO: triple buffering, rendering multiple frames on fly
 	swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
-	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 	swapchainDesc.Flags = 0; // TODO: non-vsync mode, allow tearing
 
-	if (FAILED(m_factory->CreateSwapChainForHwnd(m_device.Get(), window.getNativeWindowHandle(), &swapchainDesc, nullptr, nullptr, &m_swapchain)))
+	if (FAILED(m_factory->CreateSwapChainForHwnd(m_device.Get(), window.getNativeWindowHandle<HWND>(), &swapchainDesc, nullptr, nullptr, &m_swapchain)))
 	{
-		m_logger->log(ILogger::ELL_CRITICAL, "Failed to create DXGI Swapchain");
+		m_logger->log(ILogger::ELL_CRITICAL, "Failed to create DXGI Swapchain (HWND Handle: 0x%p)", window.getNativeWindowHandle<HWND>());
 		return false;
 	}
+
+	ComPtr<ID3D11Texture2D> bbTexture;
+	m_swapchain->GetBuffer(0, IID_PPV_ARGS(&bbTexture));
+	m_device->CreateRenderTargetView(bbTexture.Get(), nullptr, &m_backBufferRtv);
 
 	return true;
 }
 
 void D3D11Renderer::beginFrame()
 {
+	m_context->OMSetRenderTargets(1, m_backBufferRtv.GetAddressOf(), nullptr);
+	float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	m_context->ClearRenderTargetView(m_backBufferRtv.Get(), clearColor);
 
+	D3D11_VIEWPORT vp;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	vp.Width = (FLOAT)m_window.getWidth();
+	vp.Height = (FLOAT)m_window.getHeight();
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+
+	m_context->RSSetViewports(1, &vp);
 }
 
 void D3D11Renderer::endFrame()
@@ -121,7 +139,7 @@ void D3D11Renderer::endFrame()
 
 void D3D11Renderer::present()
 {
-
+	m_swapchain->Present(1, 0);
 }
 
 #endif
