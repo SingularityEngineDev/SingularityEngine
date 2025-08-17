@@ -108,9 +108,7 @@ bool D3D11Renderer::initialize()
 		return false;
 	}
 
-	ComPtr<ID3D11Texture2D> bbTexture;
-	m_swapchain->GetBuffer(0, IID_PPV_ARGS(&bbTexture));
-	m_device->CreateRenderTargetView(bbTexture.Get(), nullptr, &m_backBufferRtv);
+	getSwapchainBuffers();
 
 	return true;
 }
@@ -140,6 +138,39 @@ void D3D11Renderer::endFrame()
 void D3D11Renderer::present()
 {
 	m_swapchain->Present(1, 0);
+}
+
+void D3D11Renderer::onResize(const uint32_t width, const uint32_t height)
+{
+	m_context->OMSetRenderTargets(0, nullptr, nullptr);
+	m_context->Flush();
+	m_backBufferRtv.Reset();
+
+	if (FAILED(m_swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0)))
+	{
+		m_logger->log(ILogger::ELL_CRITICAL, "Failed to resize swapchain");
+		return;
+	}
+
+	getSwapchainBuffers();
+}
+
+bool D3D11Renderer::getSwapchainBuffers()
+{
+	ComPtr<ID3D11Texture2D> bbTexture;
+	if (FAILED(m_swapchain->GetBuffer(0, IID_PPV_ARGS(&bbTexture))))
+	{
+		m_logger->log(ILogger::ELL_CRITICAL, "Failed to get swapchain buffers");
+		return false;
+	}
+
+	if (FAILED(m_device->CreateRenderTargetView(bbTexture.Get(), nullptr, &m_backBufferRtv)))
+	{
+		m_logger->log(ILogger::ELL_CRITICAL, "Failed to create render target view from swapchain buffer");
+		return false;
+	}
+
+	return true;
 }
 
 #endif

@@ -55,9 +55,10 @@ namespace sngl::core::d3d11
 		void beginFrame() override;
 		void endFrame() override;
 		void present() override;
+		void onResize(const uint32_t width, const uint32_t height) override;
 
 	private:
-
+		bool getSwapchainBuffers();
 	};
 }
 

@@ -134,6 +134,11 @@ private:
       // O(1) vs O(string length)
       if (event.getName() == events::WindowCloseEvent::EVENT_NAME)
          exit();
+      else if (event.getName() == events::WindowResizeEvent::EVENT_NAME)
+      {
+          const auto& resizeEvent = reinterpret_cast<const events::WindowResizeEvent&>(event);
+          m_renderer->onResize(resizeEvent.w, resizeEvent.h);
+      }
    }
 };
 
