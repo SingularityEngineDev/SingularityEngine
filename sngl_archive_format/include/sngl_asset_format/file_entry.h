@@ -12,10 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sngl_asset_format/header.h>
-#include <sngl_asset_format/file_entry.h>
+#ifndef _SNGL_ASSET_FORMAT_FILE_ENTRY_H_INCLUDED_
+#define _SNGL_ASSET_FORMAT_FILE_ENTRY_H_INCLUDED_
 
-int main(int argc, char** argv)
+#include <stdint.h>
+
+namespace sngl::asset_format
 {
-	return 0;
+	struct FileEntry
+	{
+		char[256] virtualPath;
+		uint64_t offset;
+		uint64_t size;
+	};
+
+	static_assert(sizeof(FileEntry) == 272, "FileEntry has unexpected size");
 }
+
+#endif
