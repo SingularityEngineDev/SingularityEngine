@@ -2,6 +2,7 @@
 #define _SNGL_CORE_RENDERERFACTORY_H_INCLUDED_
 
 #include "IInternalRenderer.h"
+#include <sngl/core/IEngine.h>
 
 namespace sngl::core
 {
@@ -10,8 +11,8 @@ namespace sngl::core
 	public:
 		enum class RendererAPI { D3D11 };
 
-		static std::unique_ptr<IInternalRenderer> CreateRecommendedRenderer();
-		static std::unique_ptr<IInternalRenderer> CreateRenderer(RendererAPI api);
+		static std::unique_ptr<IInternalRenderer> CreateRecommendedRenderer(IEngine* engine);
+		static std::unique_ptr<IInternalRenderer> CreateRenderer(IEngine* engine, RendererAPI api);
 	};
 }
 

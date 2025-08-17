@@ -90,8 +90,14 @@ private:
 #endif
       m_window = std::make_unique<CWindow>("Singularity Engine");
       m_eventDispatcher.subscribe(IEvent::EC_CORE, [this](const IEvent& e) { coreEventCallback(e); });
-      m_renderer = RendererFactory::CreateRecommendedRenderer();
-      m_renderer->initialize();
+      
+      m_renderer = RendererFactory::CreateRecommendedRenderer(this);
+      if (!m_renderer->initialize())
+      {
+          m_systemLogger->log(ILogger::ELL_CRITICAL, "Failed to initialize the renderer");
+          return; // TODO: make init method return bool to indicate errors
+      }
+
       m_currentApplication->onInit(this);
    }
 

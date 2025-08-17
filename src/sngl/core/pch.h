@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <deque>
 #include <span>
+#include <array>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>

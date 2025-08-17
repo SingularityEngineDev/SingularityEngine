@@ -19,6 +19,9 @@
 
 #include "../IInternalRenderer.h"
 
+#include <sngl/core/IEngine.h>
+#include <sngl/core/ILogger.h>
+
 #include <wrl/client.h>
 #include <dxgi1_6.h>
 #include <d3d11.h>
@@ -31,15 +34,23 @@ namespace sngl::core::d3d11
 		template <typename T>
 		using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+		IEngine* m_engine;
+		std::unique_ptr<ILogger> m_logger;
 		ComPtr<IDXGIFactory7> m_factory;
+		ComPtr<ID3D11Device> m_device;
+		ComPtr<ID3D11DeviceContext> m_deviceContext;
+
+		ComPtr<IDXGISwapChain1> m_swapchain;
+
 	public:
-		D3D11Renderer() = default;
+		D3D11Renderer(IEngine* engine);
 		~D3D11Renderer() = default;
 
-		void initialize() override;
+		bool initialize() override;
 		void beginFrame() override;
 		void endFrame() override;
 		void present() override;
+
 	private:
 
 	};

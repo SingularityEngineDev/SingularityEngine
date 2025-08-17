@@ -14,6 +14,19 @@
 
 #include <sngl/core/IWindow.h>
 
+// TODO: other handles (when implementing vulkan)
+#ifdef SNGL_WINDOWS_BUILD
+    #define WIN32_LEAN_AND_MEAN
+    #include <Windows.h>
+
+    #define NATIVE_WINDOW_HANDLE HWND
+    #define WINDOW_HANDLE_SDL_PROPERTY_TYPE SDL_PROP_WINDOW_WIN32_HWND_POINTER
+
+#else
+    #define NATIVE_WINDOW_HANDLE void*
+    #define WINDOW_HANDLE_SDL_PROPERTY_TYPE ""
+#endif
+
 namespace sngl::core
 {
    struct IEvent;
@@ -47,6 +60,8 @@ namespace sngl::core
       void setSize(const uint32_t width, const uint32_t height) override;
       uint32_t getWidth() const override { return m_width; }
       uint32_t getHeight() const override { return m_height; }
+
+      NATIVE_WINDOW_HANDLE getNativeWindowHandle() const;
 
    private:
       const SDisplay& getPrimaryDisplay();
