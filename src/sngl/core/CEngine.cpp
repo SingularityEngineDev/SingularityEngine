@@ -117,7 +117,6 @@ private:
       m_currentApplication->onRender();
       m_renderer->beginFrame();
       m_renderer->endFrame();
-      m_renderer->present();
    }
 
    inline void exit() override

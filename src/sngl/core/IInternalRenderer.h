@@ -25,7 +25,6 @@ namespace sngl::core
 		virtual bool initialize() = 0;
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
-		virtual void present() = 0;
 		virtual void onResize(const uint32_t width, const uint32_t height) = 0;
 	};
 }

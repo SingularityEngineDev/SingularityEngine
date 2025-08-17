@@ -22,6 +22,7 @@ using file_sink_t = spdlog::sinks::basic_file_sink_mt;
 using CSpdlogLogger = sngl::core::CSpdlogLogger;
 
 std::shared_ptr<console_sink_t> CSpdlogLogger::s_conSink = nullptr;
+std::shared_ptr<file_sink_t> CSpdlogLogger::s_sharedFileSink = std::make_shared<file_sink_t>("log/common.log", true);
 
 CSpdlogLogger::CSpdlogLogger(const std::string& loggerName)
 {
@@ -40,7 +41,7 @@ CSpdlogLogger::CSpdlogLogger(const std::string& loggerName)
    m_fileSink->set_level(spdlog::level::trace);
    m_fileSink->set_pattern(BASE_FORMATTING);
 
-   spdlog::sinks_init_list sinks{ m_fileSink, s_conSink };
+   spdlog::sinks_init_list sinks{ m_fileSink, s_conSink, s_sharedFileSink };
    m_logger = std::make_unique<spdlog::logger>(loggerName, sinks);
 }
 

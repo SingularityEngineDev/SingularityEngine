@@ -132,11 +132,6 @@ void D3D11Renderer::beginFrame()
 
 void D3D11Renderer::endFrame()
 {
-
-}
-
-void D3D11Renderer::present()
-{
 	m_swapchain->Present(1, 0);
 }
 

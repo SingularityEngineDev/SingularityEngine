@@ -27,6 +27,7 @@ namespace sngl::core
 
    private:
       static std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> s_conSink;
+      static std::shared_ptr<spdlog::sinks::basic_file_sink_mt> s_sharedFileSink;
 
       std::shared_ptr<spdlog::sinks::basic_file_sink_mt> m_fileSink;
       std::unique_ptr<spdlog::logger> m_logger;
