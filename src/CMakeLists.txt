@@ -14,7 +14,7 @@ set(SNGL_CORE_SOURCES
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES} "sngl/pch.cpp")
 
 target_link_libraries(SingularityEngine 
-	PRIVATE SDL3::SDL3 spdlog::spdlog
+	PRIVATE SDL3::SDL3 spdlog::spdlog SingularityAssetFormat
 )
 target_include_directories(SingularityEngine PUBLIC "${SNGL_ROOT_PATH}/include")
 
