@@ -64,8 +64,8 @@ inline bool prompt(const std::string_view question)
 
 int pack(const std::string& archivePath, const std::vector<std::string>& paths)
 {
+	static constexpr size_t DATA_ALIGNMENT = (1 << 14);
 	using Header = sngl::asset_format::Header;
-	using HeaderVersion = sngl::asset_format::HeaderVersion;
 	using FileEntry = sngl::asset_format::FileEntry;
 
 	if (fs::exists(archivePath))
@@ -102,10 +102,11 @@ int pack(const std::string& archivePath, const std::vector<std::string>& paths)
 		{
 			SEntry e{};
 			e.realFilePath = path;
-			std::strncpy(e.entry.virtualPath, path.data(), path.size());
+			strncpy_s(e.entry.virtualPath, path.data(), path.size());
 			e.entry.size = fs::file_size(path);
+			const size_t blockCount = (e.entry.size + DATA_ALIGNMENT - 1) / DATA_ALIGNMENT;
 			e.entry.offset = currentOffset;
-			currentOffset += e.entry.size;
+			currentOffset += blockCount * DATA_ALIGNMENT;
 			parsedEntries.emplace_back(std::move(e));
 		}
 
@@ -119,10 +120,11 @@ int pack(const std::string& archivePath, const std::vector<std::string>& paths)
 
 			SEntry e{};
 			e.realFilePath = dirEntry.path().generic_string();
-			std::strncpy(e.entry.virtualPath, relative.data(), relative.size());
+			strncpy_s(e.entry.virtualPath, relative.data(), relative.size());
 			e.entry.size = dirEntry.file_size();
+			const size_t blockCount = (e.entry.size + DATA_ALIGNMENT - 1) / DATA_ALIGNMENT;
 			e.entry.offset = currentOffset;
-			currentOffset += e.entry.size;
+			currentOffset += blockCount * DATA_ALIGNMENT;
 			parsedEntries.emplace_back(std::move(e));
 		}
 	}
@@ -131,31 +133,35 @@ int pack(const std::string& archivePath, const std::vector<std::string>& paths)
 	std::ofstream archive(archivePath, std::ios::binary | std::ios::trunc);
 
 	archive.write(reinterpret_cast<const char*>(&header), sizeof(Header));
+	
+	// writing data in 16kb blocks
+	std::array<char, DATA_ALIGNMENT> buffer{};
 
 	// TODO: don't loop twice, it's redundant
 	for (const auto& entry : parsedEntries)
-	{
 		archive.write(reinterpret_cast<const char*>(&entry.entry), sizeof(FileEntry));
-	}
-
-	static constexpr size_t BUFFER_SIZE = (1 << 11);
-	std::array<char, BUFFER_SIZE> buffer;
 
 	for (const auto& entry : parsedEntries)
 	{
-		std::ifstream file(entry.realFilePath, std::ios::binary);
-		size_t filesize = entry.entry.size;
+		std::ifstream file(entry.realFilePath, std::ios::binary | std::ios::ate);
+		size_t filesize = file.tellg();
+		file.seekg(0);
 
-		while (filesize > 0)
+		size_t fullBlocks = filesize / DATA_ALIGNMENT;
+		size_t lastBlockSize = filesize % DATA_ALIGNMENT;
+
+		while (fullBlocks > 0)
 		{
-			// TODO: writing this at 4.00 AM, there must be a way to optimize this :D
-			size_t toRead = BUFFER_SIZE;
-			if (filesize < BUFFER_SIZE)
-				toRead = filesize;
+			file.read(buffer.data(), DATA_ALIGNMENT);
+			archive.write(buffer.data(), DATA_ALIGNMENT);
+			fullBlocks--;
+		}
 
-			file.read(buffer.data(), toRead);
-			archive.write(buffer.data(), toRead);
-			filesize -= toRead;
+		if (lastBlockSize > 0)
+		{
+			std::memset(buffer.data(), 0, buffer.size());
+			file.read(buffer.data(), lastBlockSize);
+			archive.write(buffer.data(), DATA_ALIGNMENT);
 		}
 	}
 

@@ -19,14 +19,16 @@
 
 namespace sngl::asset_format
 {
+	constexpr const uint64_t MAX_PATH_LENGTH = 128;
+
 	struct FileEntry
 	{
-		char virtualPath[256];
+		char virtualPath[MAX_PATH_LENGTH];
 		uint64_t offset;
 		uint64_t size;
 	};
 
-	static_assert(sizeof(FileEntry) == 272, "FileEntry has unexpected size");
+	static_assert(sizeof(FileEntry) == 144, "FileEntry has unexpected size");
 }
 
 #endif
