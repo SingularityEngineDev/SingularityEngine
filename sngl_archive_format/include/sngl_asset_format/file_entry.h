@@ -21,7 +21,7 @@ namespace sngl::asset_format
 {
 	struct FileEntry
 	{
-		char[256] virtualPath;
+		char virtualPath[256];
 		uint64_t offset;
 		uint64_t size;
 	};

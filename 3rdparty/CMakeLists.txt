@@ -4,3 +4,4 @@ set(SDL_STATIC ON)
 add_subdirectory(SDL)
 
 add_subdirectory(spdlog)
+add_subdirectory(argparse)

@@ -37,7 +37,7 @@ namespace sngl::asset_format
 
 	// static asserts to ensure that everything stays compatible with all compilers and platforms
 	static_assert(sizeof(Header) == 16, "Header has unexpected size");
-	static_assert(sizeof(Header::HeaderVersion) == 4, "HeaderVersion has unexpected size");
+	static_assert(sizeof(HeaderVersion) == 4, "HeaderVersion has unexpected size");
 }
 
 #endif
