@@ -16,6 +16,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <array>
 
 #include <sngl_asset_format/header.h>
 #include <sngl_asset_format/file_entry.h>
@@ -36,9 +37,15 @@ static std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> s_consoleSink = std:
 
 static std::unique_ptr<spdlog::logger> s_logger = nullptr;
 
+static bool s_skipPrompts = false;
+
 inline bool prompt(const std::string_view question)
 {
 	static constexpr const char* CHOICE_STRING = "Choice (type yes or no): ";
+
+	if (s_skipPrompts)
+		return true;
+
 	std::string choice;
 
 	std::cout << question << "\n" << CHOICE_STRING;
@@ -55,7 +62,7 @@ inline bool prompt(const std::string_view question)
 	}
 }
 
-int pack(const std::string& archivePath, const std::vector<std::string>& files)
+int pack(const std::string& archivePath, const std::vector<std::string>& paths)
 {
 	using Header = sngl::asset_format::Header;
 	using HeaderVersion = sngl::asset_format::HeaderVersion;
@@ -73,6 +80,84 @@ int pack(const std::string& archivePath, const std::vector<std::string>& files)
 		.magic = SNGL_ASSET_FORMAT_MAGIC_VALUE,
 		.version = { 1, 0, 0 },
 	};
+
+	struct SEntry
+	{
+		std::string realFilePath;
+		FileEntry entry;
+	};
+
+	std::vector<SEntry> parsedEntries;
+	uint64_t currentOffset = 0;
+
+	for (const auto& path : paths)
+	{
+		if (not fs::exists(path))
+		{
+			s_logger->critical("Cannot pack an asset. {} doesn't exist.", path);
+			return -1;
+		}
+
+		if (not fs::is_directory(path))
+		{
+			SEntry e{};
+			e.realFilePath = path;
+			std::strncpy(e.entry.virtualPath, path.data(), path.size());
+			e.entry.size = fs::file_size(path);
+			e.entry.offset = currentOffset;
+			currentOffset += e.entry.size;
+			parsedEntries.emplace_back(std::move(e));
+		}
+
+		for (const auto& dirEntry : fs::recursive_directory_iterator(path))
+		{
+			if (dirEntry.is_directory())
+				continue;
+
+			auto relative = fs::relative(dirEntry.path(), path).generic_string();
+			s_logger->info("Processing {}", relative);
+
+			SEntry e{};
+			e.realFilePath = dirEntry.path().generic_string();
+			std::strncpy(e.entry.virtualPath, relative.data(), relative.size());
+			e.entry.size = dirEntry.file_size();
+			e.entry.offset = currentOffset;
+			currentOffset += e.entry.size;
+			parsedEntries.emplace_back(std::move(e));
+		}
+	}
+
+	header.fileEntryCount = parsedEntries.size();
+	std::ofstream archive(archivePath, std::ios::binary | std::ios::trunc);
+
+	archive.write(reinterpret_cast<const char*>(&header), sizeof(Header));
+
+	// TODO: don't loop twice, it's redundant
+	for (const auto& entry : parsedEntries)
+	{
+		archive.write(reinterpret_cast<const char*>(&entry.entry), sizeof(FileEntry));
+	}
+
+	static constexpr size_t BUFFER_SIZE = (1 << 11);
+	std::array<char, BUFFER_SIZE> buffer;
+
+	for (const auto& entry : parsedEntries)
+	{
+		std::ifstream file(entry.realFilePath, std::ios::binary);
+		size_t filesize = entry.entry.size;
+
+		while (filesize > 0)
+		{
+			// TODO: writing this at 4.00 AM, there must be a way to optimize this :D
+			size_t toRead = BUFFER_SIZE;
+			if (filesize < BUFFER_SIZE)
+				toRead = filesize;
+
+			file.read(buffer.data(), toRead);
+			archive.write(buffer.data(), toRead);
+			filesize -= toRead;
+		}
+	}
 
 	return 0;
 }
@@ -120,6 +205,9 @@ int main(int argc, char** argv)
 
 		return -1;
 	}
+
+	if (parser.get<bool>("-y"))
+		s_skipPrompts = true;
 
 	if (parser.is_subcommand_used(pack_subcommand))
 	{
