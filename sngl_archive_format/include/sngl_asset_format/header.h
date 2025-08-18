@@ -17,6 +17,8 @@
 
 #include <stdint.h>
 
+#define SNGL_ASSET_FORMAT_MAGIC_VALUE { 'S', 'N', 'G', 'L' }
+
 namespace sngl::asset_format
 {
 	struct HeaderVersion
