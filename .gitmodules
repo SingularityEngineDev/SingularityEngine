@@ -7,3 +7,6 @@
 [submodule "3rdparty/argparse"]
 	path = 3rdparty/argparse
 	url = https://github.com/p-ranav/argparse.git
+[submodule "3rdparty/lz4"]
+	path = 3rdparty/lz4
+	url = https://gihub.com/lz4/lz4

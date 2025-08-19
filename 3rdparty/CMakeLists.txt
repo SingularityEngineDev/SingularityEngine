@@ -5,3 +5,4 @@ add_subdirectory(SDL)
 
 add_subdirectory(spdlog)
 add_subdirectory(argparse)
+add_subdirectory(lz4/build/cmake)
