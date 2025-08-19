@@ -10,3 +10,6 @@
 [submodule "3rdparty/lz4"]
 	path = 3rdparty/lz4
 	url = https://gihub.com/lz4/lz4
+[submodule "3rdparty/xxHash"]
+	path = 3rdparty/xxHash
+	url = https://github.com/Cyan4973/xxHash.git

@@ -27,6 +27,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
+#include <xxhash.h>
+
 #include "con_utils.h"
 
 #define BASE_FORMATTING "[%n] [%d.%m.%Y %T] [%=8l] %v"
