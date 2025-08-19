@@ -17,18 +17,32 @@
 
 #include <stdint.h>
 
+#define BIT(x) (1 << x)
+
 namespace sngl::asset_format
 {
 	constexpr const uint64_t MAX_PATH_LENGTH = 128;
+
+	enum FileEntryFlags : uint8_t 
+	{ 
+		LZ4_COMPRESSED = BIT(0)
+	};
 
 	struct FileEntry
 	{
 		char virtualPath[MAX_PATH_LENGTH];
 		uint64_t offset;
 		uint64_t size;
+		uint8_t flags;
+		uint8_t reserved[7];
+
+		inline bool isEnabled(FileEntryFlags _flags) const
+		{
+			return (static_cast<uint8_t>(_flags) & static_cast<uint8_t>(flags)) > 0;
+		}
 	};
 
-	static_assert(sizeof(FileEntry) == 144, "FileEntry has unexpected size");
+	static_assert(sizeof(FileEntry) == 152, "FileEntry has unexpected size");
 }
 
 #endif
