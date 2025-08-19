@@ -20,6 +20,12 @@ option(SNGL_DYNAMIC_RUNTIME "Use dynamic runtime" OFF)
 
 get_filename_component(SNGL_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 
+if (WIN32)
+	add_compile_definitions(SNGL_BUILD_TYPE_WINDOWS)
+else(UNIX)
+	add_compile_definitions(SNGL_BUILD_TYPE_UNIX)
+endif()
+
 add_subdirectory(3rdparty)
 add_subdirectory(sngl_archive_format)
 add_subdirectory(src)

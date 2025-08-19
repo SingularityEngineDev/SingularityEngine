@@ -27,6 +27,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
+#include "con_utils.h"
+
 #define BASE_FORMATTING "[%n] [%d.%m.%Y %T] [%=8l] %v"
 #define COLOR_FORMATTING "%^" BASE_FORMATTING "%$"
 
@@ -62,7 +64,7 @@ inline bool prompt(const std::string_view question)
 	}
 }
 
-int pack(const std::string& archivePath, const std::vector<std::string>& paths)
+static int pack(const std::string& archivePath, const std::vector<std::string>& paths)
 {
 	static constexpr size_t DATA_ALIGNMENT = (1 << 14);
 	using Header = sngl::asset_format::Header;
@@ -168,6 +170,47 @@ int pack(const std::string& archivePath, const std::vector<std::string>& paths)
 	return 0;
 }
 
+static int ls(const std::string& archivePath)
+{
+	using Header = sngl::asset_format::Header;
+	using FileEntry = sngl::asset_format::FileEntry;
+
+	if (fs::is_directory(archivePath) || !fs::exists(archivePath))
+	{
+		s_logger->critical("Specified path is a directory or it doesn't exist");
+		return -1;
+	}
+
+	std::ifstream archive(archivePath, std::ios::binary | std::ios::ate);
+	const size_t archiveSize = archive.tellg();
+	archive.seekg(0);
+
+	Header header{};
+	archive.read(reinterpret_cast<char*>(&header), sizeof(Header));
+
+	if (std::strncmp(header.magic, sngl::asset_format::HEADER_MAGIC_VALUE, sizeof(header.magic)) != 0)
+	{
+		s_logger->critical("Specified file is not a singularity archive format file");
+		return -1;
+	}
+
+	s_logger->info("SNGL Archive format v{}.{}.{}", header.version.major, header.version.minor, header.version.patch);
+	s_logger->info("Number of entries: {}", header.fileEntryCount);
+
+	ConSize consoleSize = GetConsoleSize();
+
+	std::vector<FileEntry> fileEntries(header.fileEntryCount);
+	for (auto& entry : fileEntries)
+	{
+		archive.read(reinterpret_cast<char*>(&entry), sizeof(FileEntry));
+		s_logger->info("Filename: {}", entry.virtualPath);
+		s_logger->info("Size: {}", entry.size);
+		s_logger->info("Offset: {}", entry.offset);
+	}
+
+	return 0;
+}
+
 int main(int argc, char** argv)
 {
 	s_fileSink->set_level(spdlog::level::info);
@@ -200,6 +243,18 @@ int main(int argc, char** argv)
 	parser.add_subparser(pack_subcommand);
 	// END PACK SUBCOMMAND
 
+	// LS SUBCOMMAND
+	argparse::ArgumentParser ls_subcommand("ls");
+	ls_subcommand.add_description("List the contents of the archive");
+	
+	ls_subcommand.add_argument("path_to_the_archive")
+		.required()
+		.nargs(1)
+		.help("Path to the archive you want to inspect");
+
+	parser.add_subparser(ls_subcommand);
+	// END LS SUBCOMMAND
+
 	try
 	{
 		parser.parse_args(argc, argv);
@@ -220,6 +275,11 @@ int main(int argc, char** argv)
 		const auto archivePath = pack_subcommand.get<std::string>("archive_path");
 		const auto files = pack_subcommand.get<std::vector<std::string>>("paths_to_files_or_directories");
 		return pack(archivePath, files);
+	}
+	else if (parser.is_subcommand_used(ls_subcommand))
+	{
+		const auto archivePath = ls_subcommand.get<std::string>("path_to_the_archive");
+		return ls(archivePath);
 	}
 
 	return 0;

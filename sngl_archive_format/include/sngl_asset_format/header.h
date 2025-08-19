@@ -29,6 +29,8 @@ namespace sngl::asset_format
 		uint8_t reserved; // unused field
 	};
 
+	constexpr const char HEADER_MAGIC_VALUE[4] = SNGL_ASSET_FORMAT_MAGIC_VALUE;
+
 	struct Header
 	{
 		char magic[4]; // magic should always be SNGL
