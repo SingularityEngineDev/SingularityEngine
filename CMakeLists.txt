@@ -27,6 +27,6 @@ else(UNIX)
 endif()
 
 add_subdirectory(3rdparty)
-add_subdirectory(sngl_archive_format)
+add_subdirectory(utils)
 add_subdirectory(src)
 add_subdirectory(examples)

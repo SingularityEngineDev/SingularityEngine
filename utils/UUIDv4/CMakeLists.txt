@@ -1,0 +1,2 @@
+add_library(UUIDv4 INTERFACE)
+target_include_directories(UUIDv4 INTERFACE include)

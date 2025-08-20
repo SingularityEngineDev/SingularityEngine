@@ -1,4 +1,0 @@
-add_library(SingularityAssetFormat INTERFACE)
-target_include_directories(SingularityAssetFormat INTERFACE include)
-
-add_subdirectory(singularity_packman)

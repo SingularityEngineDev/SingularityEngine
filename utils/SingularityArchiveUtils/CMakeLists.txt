@@ -1,0 +1,3 @@
+add_library(SingularityArchiveUtils "src/archiveutils.cpp")
+target_include_directories(SingularityArchiveUtils PUBLIC include)
+target_link_libraries(SingularityArchiveUtils PRIVATE xxhash UUIDv4)
