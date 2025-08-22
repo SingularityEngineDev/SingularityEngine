@@ -2,7 +2,12 @@
 
 using namespace sngl::archive_utils;
 
-bool V1Archive::addFile()
+bool V1Archive::addDirectory(const fs::path& path)
+{
+	return true;
+}
+
+bool V1Archive::addFile(const fs::path& path)
 {
 	return true;
 }

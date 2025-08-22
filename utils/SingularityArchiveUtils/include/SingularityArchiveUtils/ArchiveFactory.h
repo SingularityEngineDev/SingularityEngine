@@ -2,13 +2,15 @@
 #define _SNGL_ARCHIVE_UTILS_ARCHIVEFACTORY_H_INCLUDED_
 
 #include <memory>
+#include <SingularityArchiveUtils/definitions.h>
 
 namespace sngl::archive_utils
 {
 	class IArchive;
 
-	class ArchiveFactory
+	class SNGL_ARCHIVE_UTILS_API ArchiveFactory
 	{
+	public:
 		struct success_t
 		{
 			bool success;

@@ -15,6 +15,7 @@
 #ifndef _SNGL_ARCHIVE_UTILS_MAIN_H_INCLUDED_
 #define _SNGL_ARCHIVE_UTILS_MAIN_H_INCLUDED_
 
-
+#include "SingularityArchiveUtils/IArchive.h"
+#include "SingularityArchiveUtils/ArchiveFactory.h"
 
 #endif

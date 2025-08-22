@@ -40,10 +40,16 @@ namespace sngl::archive_utils
 	public:
 		V1Archive() = default;
 
-		bool addFile() override;
+		bool addDirectory(const fs::path& path) override;
+		bool addFile(const fs::path& path) override;
 		void write() override;
 
 	private:
+		static constexpr inline uint64_t foldHash(uint64_t hi, uint64_t lo)
+		{
+			return hi ^ lo;
+		}
+
 		V1Header header;
 		std::vector<SFileEntry> m_files;
 	};
