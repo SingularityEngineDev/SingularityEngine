@@ -1,3 +1,5 @@
+add_subdirectory(googletest)
+
 # SDL options
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON)

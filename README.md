@@ -11,6 +11,7 @@
 3. Vulkan
 
 ## Open-Source projects used
+- GoogleTest [project](https://github.com/google/googletest) [license](https://github.com/google/googletest/blob/main/LICENSE)
 - SDL [project](https://github.com/libsdl-org/SDL) [license](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt)
 - argparse [project](https://github.com/p-ranav/argparse) [license](https://github.com/p-ranav/argparse/blob/master/LICENSE)
 - lz4 [project](https://github.com/lz4/lz4) [license](https://github.com/lz4/lz4/blob/release/LICENSE)
