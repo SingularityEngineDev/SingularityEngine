@@ -1,6 +1,6 @@
 add_library(SingularityArchiveUtils "src/V1Archive.h" "src/V1Archive.cpp" "src/BaseArchiveHeader.h" "src/ArchiveFactory.cpp"  "include/SingularityArchiveUtils/definitions.h")
 target_include_directories(SingularityArchiveUtils PUBLIC include)
-target_link_libraries(SingularityArchiveUtils PRIVATE xxhash UUIDv4)
+target_link_libraries(SingularityArchiveUtils PRIVATE xxhash UUIDv4 SingularityMathUtils)
 
 target_compile_definitions(SingularityArchiveUtils PRIVATE SNGL_ARCHIVE_UTILS_EXPORT_SYMBOLS)
 

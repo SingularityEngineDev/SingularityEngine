@@ -1,3 +1,4 @@
 add_subdirectory(UUIDv4)
+add_subdirectory(SingularityMathUtils)
 add_subdirectory(SingularityArchiveUtils)
 add_subdirectory(SingularityPackman)

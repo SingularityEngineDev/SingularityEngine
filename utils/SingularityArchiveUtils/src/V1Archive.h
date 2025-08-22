@@ -1,4 +1,5 @@
 #include <SingularityArchiveUtils/IArchive.h>
+#include <SingularityMathUtils.h>
 #include "BaseArchiveHeader.h"
 #include <vector>
 #include <string>
@@ -44,17 +45,6 @@ namespace sngl::archive_utils
 		bool write(const fs::path& outPath) override;
 
 	private:
-		template <typename T>
-		requires std::is_arithmetic_v<T>
-		static inline T nextPoT(T n)
-		{
-			uint64_t pow = 1;
-			while (pow < n) 
-				pow <<= 1;
-
-			return pow;
-		}
-
 		uint64_t getTableSize();
 
 		V1Header header;

@@ -29,5 +29,5 @@ uint64_t V1Archive::getTableSize()
 		std::ceil(static_cast<float>(m_files.size()) / BASE_LOAD_FACTOR)
 	);
 
-	return nextPoT(size);
+	return math_utils::nextPoT(size);
 }
