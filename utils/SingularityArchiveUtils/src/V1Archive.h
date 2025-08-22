@@ -45,10 +45,18 @@ namespace sngl::archive_utils
 		void write() override;
 
 	private:
-		static constexpr inline uint64_t foldHash(uint64_t hi, uint64_t lo)
+		template <typename T>
+		requires std::is_arithmetic_v<T>
+		static inline T nextPoT(T n)
 		{
-			return hi ^ lo;
+			uint64_t pow = 1;
+			while (pow < n) 
+				pow <<= 1;
+
+			return pow;
 		}
+
+		uint64_t getTableSize();
 
 		V1Header header;
 		std::vector<SFileEntry> m_files;
