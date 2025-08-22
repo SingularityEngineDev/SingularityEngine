@@ -20,4 +20,5 @@ std::unique_ptr<IArchive> ArchiveFactory::createArchive(ArchiveFactory::ArchiveR
 ArchiveFactory::success_t ArchiveFactory::openArchive()
 {
 	// TODO: open, read revision and return IArchive with status
+	return { true, nullptr };
 }

@@ -19,9 +19,12 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <iostream>
+#include <filesystem>
 
 #define PACKMAN_BASE_FORMATTING "[%n] [%d.%m.%Y %T] [%=8l] %v"
 #define PACKMAN_COLOR_FORMATTING "%^" PACKMAN_BASE_FORMATTING "%$"
+
+namespace fs = std::filesystem;
 
 class Program
 {
@@ -40,10 +43,34 @@ public:
 		m_logger = std::make_unique<spdlog::logger>("Singularity-Packman", spdlog::sinks_init_list{ m_consoleSink, m_fileSink });
 	}
 
-	int pack()
+	int pack(const fs::path& archivePath, const std::vector<std::string>& filesToInclude)
 	{
-		m_logger->info("Creating a new archive");
+		m_logger->info("Creating {}", archivePath.generic_string());
 		auto archive = sngl::archive_utils::ArchiveFactory::createArchive();
+
+		auto addFileAndHandleError= [this, &archive](const fs::path& file)
+			{
+				auto str = file.generic_string();
+				m_logger->info("Including: {}", str);
+				if (!archive->addFile(file))
+					m_logger->error("Failed to include {}", str);
+			};
+
+		for (const auto& fileToInclude : filesToInclude)
+		{
+			if (fs::is_directory(fileToInclude))
+				for (const auto& entry : fs::recursive_directory_iterator(fileToInclude))
+				{
+					if (entry.is_directory())
+						continue;
+
+					addFileAndHandleError(fs::relative(entry.path(), fileToInclude));
+				}
+			else
+				addFileAndHandleError(fileToInclude);
+		}
+
+		archive->write(archivePath);
 
 		return 0;
 	}
@@ -73,6 +100,16 @@ int main(int argc, char** argv)
 	// BEGIN PACK CMD
 	argparse::ArgumentParser pack_command("pack");
 	parser.add_subparser(pack_command);
+
+	pack_command.add_argument("archive")
+		.required()
+		.nargs(1)
+		.help("Path to the archive to be created (or overwritten)");
+
+	pack_command.add_argument("files_to_include")
+		.required()
+		.nargs(argparse::nargs_pattern::at_least_one)
+		.help("Files that should be included in the archive");
 	// END PACK CMD
 
 	try
@@ -88,7 +125,9 @@ int main(int argc, char** argv)
 	
 	if (parser.is_subcommand_used(pack_command))
 	{
-		return program.pack();
+		fs::path archive = pack_command.get<std::string>("archive");
+		std::vector<std::string> files = pack_command.get<std::vector<std::string>>("files_to_include");
+		return program.pack(archive, files);
 	}
 
 	return 0;

@@ -40,9 +40,8 @@ namespace sngl::archive_utils
 	public:
 		V1Archive() = default;
 
-		bool addDirectory(const fs::path& path) override;
 		bool addFile(const fs::path& path) override;
-		void write() override;
+		bool write(const fs::path& outPath) override;
 
 	private:
 		template <typename T>
