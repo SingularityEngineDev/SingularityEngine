@@ -52,7 +52,7 @@ public:
 			{
 				auto str = file.generic_string();
 				m_logger->info("Including: {}", str);
-				if (!archive->addFile(file))
+				if (!archive->addFile(file, false))
 					m_logger->error("Failed to include {}", str);
 			};
 
@@ -79,7 +79,7 @@ private:
 	static constexpr const char* PROGRAM_BASE_FORMATTING = PACKMAN_BASE_FORMATTING;
 	static constexpr const char* PROGRAM_COLOR_FORMATTING = PACKMAN_COLOR_FORMATTING;
 
-	const bool m_skipPrompts;
+	[[maybe_unused]] const bool m_skipPrompts;
 	const bool m_verbose;
 	std::unique_ptr<spdlog::logger> m_logger = nullptr;
 	std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> m_consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
