@@ -14,6 +14,7 @@ namespace sngl::archive_utils
 		virtual ~IArchive() = default;
 
 		virtual bool addFile(const fs::path& path, bool shouldCompress) = 0;
+		virtual bool addFile(const fs::path& base, const fs::path& relative, bool shouldCompress) = 0;
 		virtual bool write(const fs::path& outPath) = 0;
 	};
 }

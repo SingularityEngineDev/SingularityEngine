@@ -64,7 +64,10 @@ public:
 					if (entry.is_directory())
 						continue;
 
-					addFileAndHandleError(fs::relative(entry.path(), fileToInclude));
+					auto relative = fs::relative(entry.path(), fileToInclude);
+
+					if (!archive->addFile(fileToInclude, relative, false))
+						m_logger->error("Failed to include {}", relative.generic_string());
 				}
 			else
 				addFileAndHandleError(fileToInclude);
