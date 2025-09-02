@@ -9,3 +9,27 @@ set_target_properties(SingularityArchiveUtils PROPERTIES
 	CXX_STANDARD_REQUIRED YES
 	CXX_EXTENSIONS NO
 )
+
+include(CheckCXXCompilerFlag)
+
+if (MSVC)
+	check_cxx_compiler_flag("/arch:AVX2" COMPILER_SUPPORTS_AVX2)
+
+	if (NOT COMPILER_SUPPORTS_AVX)
+		message(FATAL_ERROR "Compiler doesn't support AVX2 instruction set, which is required'")
+	else()
+		message(STATUS "Compiler supports AVX2")
+	endif()
+
+	target_compile_options(SingularityArchiveUtils PRIVATE /O2 /arch:AVX2)
+else()
+	check_cxx_compiler_flag("-mavx2" COMPILER_SUPPORTS_AVX2)
+
+	if (NOT COMPILER_SUPPORTS_AVX)
+		message(FATAL_ERROR "Compiler doesn't support AVX2 instruction set, which is required'")
+	else()
+		message(STATUS "Compiler supports AVX2")
+	endif()
+
+	target_compile_options(SingularityArchiveUtils PRIVATE -O3 -mavx2)
+endif()
