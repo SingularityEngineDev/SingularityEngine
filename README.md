@@ -3,16 +3,16 @@
 > [!IMPORTANT]
 > This is WIP project I develop in my free time for mainly learning purposes, readme is also in progress
 
-> [!NOTICE]
-> To compile this software you need a compiler that supports AVX2 instructon set.
-> To run, AVX2 compatible CPU is required as well
-
 ## Currently working on: Virutal filesystem and custom archive format with O(1) lookup complexity
 
 ## Backends I plan to implement ordered by priority
 1. Direct3D 11 (in progress)
 2. Direct3D 12
 3. Vulkan
+
+> [!IMPORTANT]
+> To compile this software you need a compiler that supports AVX2 instructon set.
+> To run, AVX2 compatible CPU is required as well
 
 ## Open-Source projects used
 - GoogleTest [project](https://github.com/google/googletest) [license](https://github.com/google/googletest/blob/main/LICENSE)
