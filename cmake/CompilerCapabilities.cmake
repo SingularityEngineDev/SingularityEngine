@@ -1,0 +1,19 @@
+include(CheckCXXCompilerFlag)
+
+set(SNGL_COMPILER_CAPABILITIES_AVX2_INSTRUCTION_SET_COMPILE_ARGS)
+
+function(SNGL_CHECK_AVX2_SUPPORT)
+	if (MSVC)
+		set(SNGL_COMPILER_CAPABILITIES_AVX2_INSTRUCTION_SET_COMPILE_ARGS "/arch:AVX2" CACHE STRING "" FORCE)
+		check_cxx_compiler_flag("${COMPILER_CAPABILITIES_AVX2_INSTRUCTION_SET_COMPILE_ARGS}" SUPPORTS_AVX2)
+	else()
+		set(SNGL_COMPILER_CAPABILITIES_AVX2_INSTRUCTION_SET_COMPILE_ARGS "-mavx2" CACHE STRING "" FORCE)
+		check_cxx_compiler_flag("${COMPILER_CAPABILITIES_AVX2_INSTRUCTION_SET_COMPILE_ARGS}" SUPPORTS_AVX2)
+	endif()
+
+	if (NOT SUPPORTS_AVX2)
+		message(FATAL_ERROR "This compiler doesn't support AVX2 instructions, which are required")
+	else()
+		message(STATUS "Compiler supports AVX2")
+	endif()
+endfunction()

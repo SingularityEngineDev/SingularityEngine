@@ -26,6 +26,9 @@ else(UNIX)
 	add_compile_definitions(SNGL_BUILD_TYPE_UNIX)
 endif()
 
+include(cmake/CompilerCapabilities.cmake)
+SNGL_CHECK_AVX2_SUPPORT()
+
 add_subdirectory(3rdparty)
 add_subdirectory(utils)
 add_subdirectory(src)
