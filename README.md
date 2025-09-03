@@ -10,6 +10,10 @@
 2. Direct3D 12
 3. Vulkan
 
+> [!IMPORTANT]
+> To compile this software you need a compiler that supports AVX2 instructon set.
+> To run, AVX2 compatible CPU is required as well
+
 ## Open-Source projects used
 - GoogleTest [project](https://github.com/google/googletest) [license](https://github.com/google/googletest/blob/main/LICENSE)
 - SDL [project](https://github.com/libsdl-org/SDL) [license](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt)
