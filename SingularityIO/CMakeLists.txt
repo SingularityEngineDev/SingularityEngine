@@ -1,5 +1,7 @@
 set(SNGL_IO_SOURCES	
 	"src/sngl/io/IFile.cpp"
+	"src/sngl/io/MemoryMappedFile.cpp"
+	"src/sngl/io/SequentialFile.cpp"
 )
 
 singularity_addsubmodule(SingularityEngine_IO ${SNGL_IO_SOURCES} "src/sngl/pch.cpp")
