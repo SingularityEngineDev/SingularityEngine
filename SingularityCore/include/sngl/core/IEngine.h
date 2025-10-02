@@ -15,7 +15,7 @@
 #ifndef _SNGL_CORE_IENGINE_H_INCLUDED_
 #define _SNGL_CORE_IENGINE_H_INCLUDED_
 
-#include <sngl/definitions.h>
+#include <sngl/shared/definitions.h>
 
 namespace sngl::core
 {

@@ -21,7 +21,7 @@ option(SNGL_DYNAMIC_RUNTIME "Use dynamic runtime" OFF)
 get_filename_component(SNGL_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 
 if (WIN32)
-	add_compile_definitions(SNGL_BUILD_TYPE_WINDOWS)
+	add_compile_definitions(SNGL_BUILD_PLATFORM_WINDOWS)
 else(UNIX)
 	add_compile_definitions(SNGL_BUILD_TYPE_UNIX)
 endif()
@@ -33,6 +33,9 @@ SNGL_CHECK_AVX2_SUPPORT()
 add_compile_definitions("$<$<CONFIG:Debug>:SNGL_DEBUG>")
 
 add_subdirectory(3rdparty)
+add_subdirectory(SingularitySharedHeaders)
+
+include(cmake/BuildsystemUtilities.cmake)
 add_subdirectory(SingularityIO)
 add_subdirectory(SingularityCore)
 

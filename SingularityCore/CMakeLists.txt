@@ -15,7 +15,7 @@ set(SNGL_CORE_SOURCES
 	"src/sngl/core/RendererFactory.cpp"
 )
 
-add_library(SingularityEngine_Core SHARED ${SNGL_CORE_SOURCES} "src/sngl/pch.cpp")
+singularity_addsubmodule(SingularityEngine_Core ${SNGL_CORE_SOURCES} "src/sngl/pch.cpp")
 target_link_libraries(SingularityEngine_Core
 	PRIVATE SDL3::SDL3 spdlog::spdlog_header_only
 )
@@ -26,10 +26,6 @@ target_include_directories(SingularityEngine_Core
 )
 
 if (MSVC)
-	target_compile_definitions(SingularityEngine_Core 
-		PRIVATE SNGL_EXPORT
-	)
-
 	if (${SNGL_DYNAMIC_RUNTIME} AND MSVC)
 		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>Dll")
 	else()

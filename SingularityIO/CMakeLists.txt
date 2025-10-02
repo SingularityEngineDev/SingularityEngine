@@ -1,8 +1,8 @@
 set(SNGL_IO_SOURCES	
 	"src/sngl/io/IFile.cpp"
 )
-add_library(SingularityEngine_IO SHARED ${SNGL_IO_SOURCES} "src/sngl/pch.cpp")
 
+singularity_addsubmodule(SingularityEngine_IO ${SNGL_IO_SOURCES} "src/sngl/pch.cpp")
 target_include_directories(SingularityEngine_IO 
 	PUBLIC include
 	PRIVATE src

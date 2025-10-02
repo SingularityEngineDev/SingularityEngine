@@ -1,0 +1,2 @@
+add_library(SingularityEngine_SharedHeaders INTERFACE)
+target_include_directories(SingularityEngine_SharedHeaders INTERFACE include)
