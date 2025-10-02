@@ -1,0 +1,7 @@
+#include <sngl/pch.h>
+#include <sngl/core/definitions.h>
+#include <sngl/core/IApplication.h>
+#include <sngl/core/IEventDispatcher.h>
+#include <sngl/core/IWindow.h>
+#include <sngl/core/ILogger.h>
+#include <sngl/core/IEngine.h>
