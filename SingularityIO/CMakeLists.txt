@@ -1,7 +1,6 @@
-set(SNGL_IO_SOURCES
-		
+set(SNGL_IO_SOURCES	
+	"src/sngl/io/IFile.cpp"
 )
-
 add_library(SingularityEngine_IO SHARED ${SNGL_IO_SOURCES} "src/sngl/pch.cpp")
 
 target_include_directories(SingularityEngine_IO 
