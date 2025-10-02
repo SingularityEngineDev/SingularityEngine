@@ -25,14 +25,6 @@ target_include_directories(SingularityEngine_Core
 	PRIVATE src
 )
 
-if (MSVC)
-	if (${SNGL_DYNAMIC_RUNTIME} AND MSVC)
-		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>Dll")
-	else()
-		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-	endif()
-endif()
-
 if (${SNGL_WINDOWS_BUILD})
 	target_compile_definitions(SingularityEngine_Core PRIVATE SNGL_WINDOWS_BUILD)
 	target_link_libraries(SingularityEngine_Core PRIVATE dxgi.lib d3d11.lib d3d12.lib dxguid.lib d3dcompiler.lib)

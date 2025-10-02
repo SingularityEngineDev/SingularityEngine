@@ -15,6 +15,8 @@
 #ifndef _SNGL_DEFINITIONS_H_INCLUDED_
 #define _SNGL_DEFINITIONS_H_INCLUDED_
 
+#include <sngl/shared/definitions.h>
+
 #define SNGL_INVOKE_MAIN(ApplicationClass) \
 int main(int argc, char** argv) \
 { \
