@@ -1,2 +1,1 @@
 add_subdirectory(hello_app)
-add_subdirectory(io_subsystem_app)
