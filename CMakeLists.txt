@@ -33,5 +33,6 @@ SNGL_CHECK_AVX2_SUPPORT()
 add_compile_definitions("$<$<CONFIG:Debug>:SNGL_DEBUG>")
 
 add_subdirectory(3rdparty)
+add_subdirectory(SingularityIO)
 add_subdirectory(SingularityCore)
 add_subdirectory(examples)

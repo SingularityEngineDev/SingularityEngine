@@ -21,8 +21,8 @@ target_link_libraries(SingularityEngine_Core
 )
 
 target_include_directories(SingularityEngine_Core
-	PUBLIC "${SNGL_ROOT_PATH}/SingularityCore/include"
-	PRIVATE "${SNGL_ROOT_PATH}/SingularityCore/src"
+	PUBLIC include
+	PRIVATE src
 )
 
 if (MSVC)
@@ -43,6 +43,6 @@ if (${SNGL_WINDOWS_BUILD})
 endif()
 
 target_precompile_headers(SingularityEngine_Core
-	PUBLIC "${SNGL_ROOT_PATH}/SingularityCore/include/sngl/pch.h"
-	PRIVATE "${SNGL_ROOT_PATH}/SingularityCore/src/sngl/core/pch.h"
+	PUBLIC "include/sngl/pch.h"
+	PRIVATE "src/sngl/pch.h"
 )
