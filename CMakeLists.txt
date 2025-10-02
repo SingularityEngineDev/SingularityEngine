@@ -35,4 +35,8 @@ add_compile_definitions("$<$<CONFIG:Debug>:SNGL_DEBUG>")
 add_subdirectory(3rdparty)
 add_subdirectory(SingularityIO)
 add_subdirectory(SingularityCore)
+
+add_library(SingularityEngine INTERFACE)
+target_link_libraries(SingularityEngine INTERFACE SingularityEngine_Core SingularityEngine_IO)
+
 add_subdirectory(examples)
