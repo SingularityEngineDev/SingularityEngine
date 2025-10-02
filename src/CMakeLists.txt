@@ -8,13 +8,17 @@ set(SNGL_CORE_SOURCES
 	"sngl/core/CEventDispatcher.cpp" 
 	"sngl/core/CSpdlogLogger.h" 
 	"sngl/core/CSpdlogLogger.cpp"
-
- "sngl/core/IInternalRenderer.h" "sngl/core/D3D11Renderer/D3D11Renderer.h" "sngl/core/D3D11Renderer/D3D11Renderer.cpp" "sngl/core/RendererFactory.h" "sngl/core/RendererFactory.cpp")
+	"sngl/core/IInternalRenderer.h" 
+	"sngl/core/D3D11Renderer/D3D11Renderer.h" 
+	"sngl/core/D3D11Renderer/D3D11Renderer.cpp" 
+	"sngl/core/RendererFactory.h" 
+	"sngl/core/RendererFactory.cpp"
+)
 
 add_library(SingularityEngine SHARED ${SNGL_CORE_SOURCES} "sngl/pch.cpp")
 
 target_link_libraries(SingularityEngine 
-	PRIVATE SDL3::SDL3 spdlog::spdlog
+	PRIVATE SDL3::SDL3 spdlog::spdlog_header_only
 )
 target_include_directories(SingularityEngine PUBLIC "${SNGL_ROOT_PATH}/include")
 
