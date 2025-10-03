@@ -16,3 +16,6 @@
 [submodule "3rdparty/lz4"]
 	path = 3rdparty/lz4
 	url = https://github.com/lz4/lz4.git
+[submodule "3rdparty/fmt"]
+	path = 3rdparty/fmt
+	url = https://github.com/fmtlib/fmt.git
