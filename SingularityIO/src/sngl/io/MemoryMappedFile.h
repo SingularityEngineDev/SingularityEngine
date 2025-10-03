@@ -15,13 +15,16 @@ namespace sngl::io
 		handle_t m_mappingHandle;
 #endif
 		size_t m_fileSize;
+		size_t m_currentReadOffset;
+		// size_t m_currentWriteOffset; // TODO: Implement memory-mapped writes
 		void* m_data;
 
 	public:
 		MemoryMappedFile(const std::string_view path);
 		~MemoryMappedFile() override;
 
-		const size_t getSize() const;
+		inline size_t getSize() const override { return m_fileSize; };
+		size_t readSync(void* dest, size_t requestedSize) const override;
 	};
 }
 

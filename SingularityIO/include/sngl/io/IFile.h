@@ -11,7 +11,8 @@ namespace sngl::io
 	public:
 		virtual ~IFile() = default;
 
-		// virtual const void* getData(size_t offset = 0) const;
+		virtual size_t getSize() const = 0;
+		virtual size_t readSync(void* dest, size_t requestedSize) const = 0;
 
 		enum class IoType { IT_MAPPED, IT_SEQUENTIAL };
 		SNGL_API static std::unique_ptr<IFile> Open(const std::string_view path, IoType type);

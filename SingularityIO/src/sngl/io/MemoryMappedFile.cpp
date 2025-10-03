@@ -34,6 +34,15 @@ MemoryMappedFile::MemoryMappedFile(const std::string_view path)
 #endif
 }
 
+size_t MemoryMappedFile::readSync(void* dest, size_t requestedSize) const
+{
+	if (requestedSize + m_currentReadOffset > m_fileSize)
+		requestedSize = m_fileSize - m_currentReadOffset;
+
+	std::memcpy(dest, static_cast<const uint8_t*>(m_data) + m_currentReadOffset, requestedSize);
+	return requestedSize;
+}
+
 MemoryMappedFile::~MemoryMappedFile()
 {
 #ifdef SNGL_BUILD_PLATFORM_WINDOWS
