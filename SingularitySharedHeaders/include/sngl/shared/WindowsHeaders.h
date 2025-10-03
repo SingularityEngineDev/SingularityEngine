@@ -3,5 +3,5 @@
 #	define NO_KANJI
 #	include <Windows.h>
 #
-#	define VALID_HANDLE(x) (((HANDLE)x != 0) || ((HANDLE)x != INVALID_HANDLE_VALUE))
+#	define VALID_HANDLE(x) (((HANDLE)x != 0) && ((HANDLE)x != INVALID_HANDLE_VALUE))
 #endif
