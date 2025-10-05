@@ -6,7 +6,8 @@ contain metadata that can be loaded in 2 ways:
 2. Using TOC (Table Of Contents) placed at the end of archive
 
 Thus modders can add easily new assets and use them, because virtual filesystem will still detect them (with slightly bigger lookup time than O(1) of course).
-To get better compression ratio with LZ4 frame API which is used to compress archive data, files in the archive are grouped into 128mb blocks.
+To get better compression ratio with LZ4 frame API which is used to compress archive data, files in the archive are grouped into blocks that have 
+more than 128mb (files are being added to the block until it's more than 128mb).
 
 ## TOC
 TOC contains metadata for each block. Metadata is structured using the following scheme:
