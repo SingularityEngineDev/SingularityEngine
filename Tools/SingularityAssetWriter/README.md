@@ -10,7 +10,7 @@ To get better compression ratio with LZ4 frame API which is used to compress arc
 more than 128mb (files are being added to the block until it's more than 128mb).
 
 ## TOC
-TOC contains metadata for each block. Metadata is structured using the following scheme:
+TOC contains metadata for each block. Metadata is structured using the following scheme:   
 [Block offset]   
 [Compressed size]   
 [Uncompressed size]   
