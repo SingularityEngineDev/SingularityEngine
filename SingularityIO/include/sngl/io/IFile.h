@@ -16,6 +16,7 @@ namespace sngl::io
 
 		enum class IoType { IT_MAPPED, IT_SEQUENTIAL };
 		SNGL_API static std::unique_ptr<IFile> Open(const std::string_view path, IoType type);
+		SNGL_API static size_t GetSize(const std::string_view path);
 	};
 }
 

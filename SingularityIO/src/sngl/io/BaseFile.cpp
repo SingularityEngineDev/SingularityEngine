@@ -1,9 +1,9 @@
-#include <sngl/io/OsFile.h>
+#include <sngl/io/BaseFile.h>
 #include <sngl/shared/WindowsHeaders.h>
 	
 using namespace sngl::io;
 
-OsFile::OsFile(const std::string_view path)
+BaseFile::BaseFile(const std::string_view path)
 	: m_path(path)
 {
 #ifdef SNGL_BUILD_PLATFORM_WINDOWS
@@ -19,7 +19,7 @@ OsFile::OsFile(const std::string_view path)
 #endif
 }
 
-OsFile::~OsFile()
+BaseFile::~BaseFile()
 {
 #ifdef SNGL_BUILD_PLATFORM_WINDOWS
 	if (m_fileHandle)

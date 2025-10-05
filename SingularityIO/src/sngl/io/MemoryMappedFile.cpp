@@ -4,20 +4,20 @@
 using namespace sngl::io;
 
 MemoryMappedFile::MemoryMappedFile(const std::string_view path)
-	: OsFile(path)
+	: BaseFile(path)
 {
 #ifdef SNGL_BUILD_PLATFORM_WINDOWS
-	m_mappingHandle = CreateFileMapping(getFileHandle(), nullptr, PAGE_READONLY, 0, 0, path.data());
+	m_mappingHandle = CreateFileMapping(getFileHandle(), nullptr, PAGE_READONLY, 0, 0, nullptr);
 	if (!VALID_HANDLE(m_mappingHandle))
 	{
-		throw std::runtime_error(fmt::format("Failed to create mapping object for {}.", path.data()));
+		throw std::runtime_error(fmt::format("Failed to create mapping object for {}. Code: {}", path.data(), GetLastError()));
 	}
 	
-	m_data = MapViewOfFile(m_mappingHandle, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	m_data = MapViewOfFile(m_mappingHandle, FILE_MAP_READ, 0, 0, getSize());
 	if (!m_data)
 	{
 		CloseHandle(m_mappingHandle);
-		throw std::runtime_error(fmt::format("Failed to map {} for process address space.", path.data()));
+		throw std::runtime_error(fmt::format("Failed to map {} for process address space. Code: {}", path.data(), GetLastError()));
 	}
 #else
 	#error Memory mapped IO has not been implemented for platforms other than Windows yet. 
@@ -31,6 +31,7 @@ size_t MemoryMappedFile::readSync(void* dest, size_t requestedSize) const
 		requestedSize = fileSize - m_currentReadOffset;
 
 	std::memcpy(dest, static_cast<const uint8_t*>(m_data) + m_currentReadOffset, requestedSize);
+	m_currentReadOffset += requestedSize;
 	return requestedSize;
 }
 

@@ -1,3 +1,4 @@
+#include <sngl/io/BaseFile.h>
 #include <sngl/io/MemoryMappedFile.h>
 #include <sngl/io/SequentialFile.h>
 
@@ -10,4 +11,10 @@ std::unique_ptr<IFile> IFile::Open(const std::string_view path, IoType type)
 		return std::make_unique<MemoryMappedFile>(path);
 
 	return std::make_unique<SequentialFile>(path);
+}
+
+size_t IFile::GetSize(const std::string_view path)
+{
+	auto file = SequentialFile(path);
+	return file.getSize();
 }

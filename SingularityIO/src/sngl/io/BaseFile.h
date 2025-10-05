@@ -1,15 +1,15 @@
-#ifndef _SNGL_IO_OSFILE_H_INCLUDED_
-#define _SNGL_IO_OSFILE_H_INCLUDED_
+#ifndef _SNGL_IO_BASEFILE_H_INCLUDED_
+#define _SNGL_IO_BASEFILE_H_INCLUDED_
 
 #include <sngl/io/IFile.h>
 
 namespace sngl::io
 {
-	class OsFile : public IFile
+	class BaseFile : public IFile
 	{
 	public:
-		OsFile(const std::string_view path);
-		virtual ~OsFile();
+		BaseFile(const std::string_view path);
+		virtual ~BaseFile();
 
 		inline size_t getSize() const override { return m_fileSize; };
 		virtual size_t readSync(void* dest, size_t requestedSize) const = 0;
