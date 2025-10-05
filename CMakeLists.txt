@@ -34,9 +34,9 @@ add_compile_definitions("$<$<CONFIG:Debug>:SNGL_DEBUG>")
 
 add_subdirectory(3rdparty)
 add_subdirectory(SingularitySharedHeaders)
-add_subdirectory(Tools)
 
 include(cmake/BuildsystemUtilities.cmake)
+add_subdirectory(Tools)
 add_subdirectory(SingularityIO)
 add_subdirectory(SingularityCore)
 
