@@ -11,3 +11,5 @@ target_link_libraries(SingularityAssetWriter
 target_precompile_headers(SingularityAssetWriter 
 	PRIVATE pch.h
 )
+
+singularity_copyenginedependencies(SingularityAssetWriter SingularityEngine_IO)
