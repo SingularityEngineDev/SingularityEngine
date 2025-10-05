@@ -12,9 +12,9 @@ namespace sngl::shared::sngl_pak
 			: filenameLength(filename.size()), fileSize(_fileSize), blockIndex(_blockIndex)
 		{ }
 
-		size_t filenameLength;
-		size_t fileSize;
 		size_t blockIndex;
+		size_t fileSize;
+		size_t filenameLength;
 	} SNGL_PACK;
 	SNGL_END_PACK
 }
