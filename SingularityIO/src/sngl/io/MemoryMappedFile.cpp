@@ -20,14 +20,18 @@ MemoryMappedFile::MemoryMappedFile(const std::string_view path)
 		CloseHandle(m_mappingHandle);
 		throw std::runtime_error(fmt::format("Failed to map {} for process address space. Code: {}", path.data(), GetLastError()));
 	}
-#else
-	
+#elif defined(SNGL_BUILD_PLATFORM_UNIX)
+	auto fd = getFileHandle();
+	m_data = mmap64(0, getSize(), PROT_READ, MAP_SHARED, fd, 0);
+	if (!m_data)
+		throw std::runtime_error(fmt::format("Failed to map {} for process address space", path.data()));
 #endif
 }
 
 size_t MemoryMappedFile::readSync(void* dest, size_t requestedSize) const
 {
 	size_t fileSize = getSize();
+	if (m_currentReadOffset >= fileSize) return 0;
 	if (requestedSize + m_currentReadOffset > fileSize)
 		requestedSize = fileSize - m_currentReadOffset;
 
@@ -45,6 +49,7 @@ MemoryMappedFile::~MemoryMappedFile()
 	if (VALID_HANDLE(m_mappingHandle))
 		CloseHandle(m_mappingHandle);
 #elif SNGL_BUILD_PLATFORM_UNIX
-	// do something
+	if (munmap(m_data, getSize()) != 0)
+		std::abort();
 #endif
 }
