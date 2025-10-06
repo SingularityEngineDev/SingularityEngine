@@ -28,6 +28,48 @@ SDL_WINDOW_RESIZABLE
 #endif
 | SDL_WINDOW_HIGH_PIXEL_DENSITY;
 
+CWindow::E_WINDOWDRIVER CWindow::getWindowDriver() const
+{
+    if (m_cachedWindowDriverValue == E_WINDOWDRIVER_UNSET)
+    {
+        const char* driverName = SDL_GetCurrentVideoDriver();
+
+        if (strcmp(driverName, "x11"))
+            m_cachedWindowDriverValue = E_WINDOWDRIVER_X11;
+        else if (strcmp(driverName, "wayland"))
+            m_cachedWindowDriverValue = E_WINDOWDRIVER_WAYLAND;
+        else if (strcmp(driverName, "cocoa"))
+            m_cachedWindowDriverValue = E_WINDOWDRIVER_COCOA;
+    }
+
+    return m_cachedWindowDriverValue;
+}
+
+CWindow::OSHandle_t CWindow::getNativeHandle() const
+{
+    E_WINDOWDRIVER windowDriver = getWindowDriver();
+    assert(windowDriver != E_WINDOWDRIVER::E_WINDOWDRIVER_UNSET);
+
+    OSHandle_t value{};
+
+    switch (windowDriver)
+    {
+    case E_WINDOWDRIVER_WINDOWS:
+        value.win32Value = SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
+    case E_WINDOWDRIVER_X11:
+        value.x11Value = SDL_GetNumberProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
+    case E_WINDOWDRIVER_WAYLAND:
+        value.waylandValue = SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_WAYLAND_VIEWPORT_POINTER, nullptr);
+    case E_WINDOWDRIVER_COCOA:
+        value.cocoaValue = SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
+    case E_WINDOWDRIVER_UNSET:
+    default:
+        assert(false); // shouldn't happen, if happens it's a bug
+    }
+
+    return value;
+}
+
 CWindow::SDisplay::SDisplay(SDL_DisplayID id)
 {
    name = SDL_GetDisplayName(id);

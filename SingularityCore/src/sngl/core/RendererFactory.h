@@ -9,7 +9,7 @@ namespace sngl::core
 	class RendererFactory
 	{
 	public:
-		enum class RendererAPI { D3D11 };
+		enum class RendererAPI { D3D11, Vulkan };
 
 		static std::unique_ptr<IInternalRenderer> CreateRecommendedRenderer(IEngine* engine);
 		static std::unique_ptr<IInternalRenderer> CreateRenderer(IEngine* engine, RendererAPI api);
