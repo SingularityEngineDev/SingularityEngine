@@ -26,12 +26,10 @@ function(singularity_copyenginedependencies TARGET_NAME)
 		)
 	endforeach()
 
-	add_custom_target(${COPY_DEPENDENCIES_TARET_NAME} 
+	add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 		${SNGL_SUBMODULES_COPY_CMDS}
-		COMMENT "Copying all engine dependencies"
+		COMMENT "Copying all dependencies"
 	)
-
-	add_dependencies(${TARGET_NAME} ${COPY_DEPENDENCIES_TARET_NAME})
 endfunction()
 
 macro(singularity_addexec SNGL_ADDEXEC_TARGET_NAME)
