@@ -55,13 +55,17 @@ CWindow::OSHandle_t CWindow::getNativeHandle() const
     switch (windowDriver)
     {
     case E_WINDOWDRIVER_WINDOWS:
-        value.win32Value = SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
+        value.win32Value = SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+        break;
     case E_WINDOWDRIVER_X11:
         value.x11Value = SDL_GetNumberProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
+        break;
     case E_WINDOWDRIVER_WAYLAND:
         value.waylandValue = SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_WAYLAND_VIEWPORT_POINTER, nullptr);
+        break;
     case E_WINDOWDRIVER_COCOA:
         value.cocoaValue = SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
+        break;
     case E_WINDOWDRIVER_UNSET:
     default:
         assert(false); // shouldn't happen, if happens it's a bug

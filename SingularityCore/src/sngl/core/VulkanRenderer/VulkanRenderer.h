@@ -10,7 +10,7 @@ namespace sngl::core::vulkan
 	class VulkanRenderer final : public IInternalRenderer
 	{
 	private:
-		IEngine* m_engine;
+		[[maybe_unused]] IEngine* m_engine;
 	public:
 		inline VulkanRenderer(IEngine* engine) : m_engine(engine) {}
 		~VulkanRenderer() = default;

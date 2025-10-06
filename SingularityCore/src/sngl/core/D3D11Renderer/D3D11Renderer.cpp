@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifdef SNGL_WINDOWS_BUILD
+#ifdef SNGL_BUILD_PLATFORM_WINDOWS
 
 #include "../CWindow.h"
 
@@ -102,9 +102,9 @@ bool D3D11Renderer::initialize()
 	swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 	swapchainDesc.Flags = 0; // TODO: non-vsync mode, allow tearing
 
-	if (FAILED(m_factory->CreateSwapChainForHwnd(m_device.Get(), window.getNativeWindowHandle<HWND>(), &swapchainDesc, nullptr, nullptr, &m_swapchain)))
+	if (FAILED(m_factory->CreateSwapChainForHwnd(m_device.Get(), (HWND)window.getNativeHandle().win32Value, &swapchainDesc, nullptr, nullptr, &m_swapchain)))
 	{
-		m_logger->log(ILogger::ELL_CRITICAL, "Failed to create DXGI Swapchain (HWND Handle: 0x%p)", window.getNativeWindowHandle<HWND>());
+		m_logger->log(ILogger::ELL_CRITICAL, "Failed to create DXGI Swapchain (HWND Handle: 0x%p)", (HWND)window.getNativeHandle().win32Value);
 		return false;
 	}
 
