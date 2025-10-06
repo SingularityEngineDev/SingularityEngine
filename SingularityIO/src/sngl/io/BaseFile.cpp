@@ -1,5 +1,6 @@
 #include <sngl/io/BaseFile.h>
 #include <sngl/shared/WindowsHeaders.h>
+#include <sngl/shared/UnixHeaders.h>
 	
 using namespace sngl::io;
 
@@ -16,6 +17,10 @@ BaseFile::BaseFile(const std::string_view path)
 		DWORD fileSizeLow = GetFileSize(m_fileHandle, &fileSizeHigh);
 		m_fileSize = (static_cast<size_t>(fileSizeHigh) << 32) | fileSizeLow;
 	}
+#elif SNGL_BUILD_PLATFORM_UNIX
+	m_fileHandle = open(m_path.c_str(), O_RDWR, 0666);
+	if (m_fileHandle == -1)
+		throw std::runtime_error(fmt::format("Failed to open: {}", m_path));
 #endif
 }
 

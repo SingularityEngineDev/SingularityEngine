@@ -4,6 +4,7 @@ project(SingularityEngine LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_POSITION_INDEPENDENT_CODE True)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo;MinSizeRel" CACHE STRING "" FORCE)
 if (NOT CMAKE_CONFIGURATION_TYPES)
@@ -23,7 +24,7 @@ get_filename_component(SNGL_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 if (WIN32)
 	add_compile_definitions(SNGL_BUILD_PLATFORM_WINDOWS)
 else(UNIX)
-	add_compile_definitions(SNGL_BUILD_TYPE_UNIX)
+	add_compile_definitions(SNGL_BUILD_PLATFORM_UNIX)
 endif()
 
 include(cmake/CompilerCapabilities.cmake)

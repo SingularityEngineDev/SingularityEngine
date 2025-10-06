@@ -1,5 +1,6 @@
 #include <sngl/io/MemoryMappedFile.h>
 #include <sngl/shared/WindowsHeaders.h>
+#include <sngl/shared/UnixHeaders.h>
 
 using namespace sngl::io;
 
@@ -20,7 +21,7 @@ MemoryMappedFile::MemoryMappedFile(const std::string_view path)
 		throw std::runtime_error(fmt::format("Failed to map {} for process address space. Code: {}", path.data(), GetLastError()));
 	}
 #else
-	#error Memory mapped IO has not been implemented for platforms other than Windows yet. 
+	
 #endif
 }
 
@@ -30,7 +31,7 @@ size_t MemoryMappedFile::readSync(void* dest, size_t requestedSize) const
 	if (requestedSize + m_currentReadOffset > fileSize)
 		requestedSize = fileSize - m_currentReadOffset;
 
-	std::memcpy(dest, static_cast<const uint8_t*>(m_data) + m_currentReadOffset, requestedSize);
+	memcpy(dest, static_cast<const uint8_t*>(m_data) + m_currentReadOffset, requestedSize);
 	m_currentReadOffset += requestedSize;
 	return requestedSize;
 }
@@ -43,7 +44,7 @@ MemoryMappedFile::~MemoryMappedFile()
 
 	if (VALID_HANDLE(m_mappingHandle))
 		CloseHandle(m_mappingHandle);
-#else
-	#error Memory mapped IO has not been implemented for platforms other than Windows yet. 
+#elif SNGL_BUILD_PLATFORM_UNIX
+	// do something
 #endif
 }
