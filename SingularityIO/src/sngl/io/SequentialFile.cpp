@@ -29,7 +29,7 @@ size_t SequentialFile::readSync(void* dest, size_t requestedSize) const
 		bytesRead += read(ULONG_MAX);
 
 	if (remaining > 0)
-		bytesRead =+ read(remaining);
+		bytesRead += read(remaining);
 #elif defined(SNGL_BUILD_PLATFORM_UNIX)
 	ssize_t unixBytesRead = read(fileHandle, dest, requestedSize);
 	if (unixBytesRead < 0)

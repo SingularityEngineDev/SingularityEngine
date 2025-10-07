@@ -12,7 +12,7 @@ namespace sngl::io
 		virtual ~BaseFile();
 
 		inline size_t getSize() const override { return m_fileSize; };
-		virtual size_t readSync(void* dest, size_t requestedSize) const = 0;
+		virtual size_t readSync(void* dest, size_t requestedSize) const override = 0;
 
 	protected:
 #ifdef SNGL_BUILD_PLATFORM_WINDOWS
