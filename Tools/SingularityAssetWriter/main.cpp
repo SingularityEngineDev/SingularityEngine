@@ -25,22 +25,32 @@ private:
 
 	// constants
 	static constexpr size_t BLOCK_SIZE_THRESHOLD = (1 << 18);
+	static constexpr size_t DEFAULT_LZ4_OUTBUFFER_SIZE = LZ4_COMPRESSBOUND(BLOCK_SIZE_THRESHOLD);
+
 
 	// data
 	std::string m_outputPath;
 	std::vector<std::string> m_filesToInclude;
 	std::vector<StorageTocEntry> m_tocEntries;
 	std::ofstream m_outputFile;
-	std::vector<char> m_buffer;
+	std::vector<char> m_blockdata;
+	std::vector<char> m_lz4outbuf;
 	size_t m_currentBlockIndex;
 	size_t m_currentBlockSize;
+	size_t m_currentBlockOffset;
+	size_t m_currentLz4BufferSize;
 
 public:
 	Application(std::string&& outputPath, std::vector<std::string>&& filesToInclude)
 		: m_outputPath(std::move(outputPath)), 
 		m_filesToInclude(std::move(filesToInclude)), 
 		m_outputFile(m_outputPath, std::ios::binary | std::ios::trunc),
-		m_buffer(BLOCK_SIZE_THRESHOLD)
+		m_blockdata(BLOCK_SIZE_THRESHOLD),
+		m_lz4outbuf(DEFAULT_LZ4_OUTBUFFER_SIZE),
+		m_currentBlockIndex(0),
+		m_currentBlockSize(m_blockdata.size()),
+		m_currentBlockOffset(0),
+		m_currentLz4BufferSize(m_lz4outbuf.size())
 	{
 		m_tocEntries.reserve(m_filesToInclude.size());
 	}
@@ -61,6 +71,17 @@ public:
 			{
 				addFile(path);
 				continue;
+			}
+
+			std::string root = fs::path(path).parent_path().generic_string();
+			for (const auto& entry : fs::recursive_directory_iterator(path))
+			{
+				if (entry.is_directory())
+					continue;
+
+				std::string p = entry.path().generic_string();
+				fmt::println("Processing {}", p);
+				addDirectoryFile(p, root);
 			}
 		}
 
@@ -101,22 +122,38 @@ private:
 	{
 		auto file = IFile::Open(filePath, IFile::IoType::IT_MAPPED);
 		size_t filesize = file->getSize();
-		m_tocEntries.emplace_back(archivePath, filesize, m_currentBlockSize, filePath);
-		
+		m_tocEntries.emplace_back(archivePath, filesize, m_currentBlockIndex, filePath);
+
+		// fill the block data with file data, if current block size + current file size exceeds the threshold,
+		// compress the block, write compressed data to the file and create a new block
+		if (m_currentBlockSize + filesize > m_blockdata.size())
+		{
+			m_currentBlockSize += filesize;
+			m_currentLz4BufferSize = LZ4_compressBound(m_currentBlockSize);
+			m_lz4outbuf.resize(m_currentLz4BufferSize);
+			m_blockdata.resize(m_currentBlockSize);
+		}
+
 		// write file contents to archive, TOC is written at the end
 		while (true)
 		{
-			size_t readSize = file->readSync(m_buffer.data(), m_buffer.size());
+			size_t readSize = file->readSync(m_blockdata.data() + m_currentBlockOffset, filesize);
 			if (readSize == 0)
 				break;
 
-			m_outputFile.write(m_buffer.data(), readSize);
+			m_currentBlockOffset += readSize;
 		}
 
-		m_currentBlockSize += filesize;
 		if (m_currentBlockSize >= BLOCK_SIZE_THRESHOLD)
 		{
-			m_currentBlockSize = 0;
+			int toWrite = LZ4_compress_default(m_blockdata.data(), m_lz4outbuf.data(), m_currentBlockSize, m_currentLz4BufferSize);
+			if (toWrite == 0)
+				throw std::runtime_error(fmt::format("Failed to compress block {}", m_currentBlockIndex));
+
+			m_outputFile.write(m_lz4outbuf.data(), toWrite);
+			m_currentBlockSize = BLOCK_SIZE_THRESHOLD;
+			m_currentBlockOffset = 0;
+			m_currentLz4BufferSize = DEFAULT_LZ4_OUTBUFFER_SIZE;
 			m_currentBlockIndex++;
 		}
 	}

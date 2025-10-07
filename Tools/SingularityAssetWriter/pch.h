@@ -5,4 +5,4 @@
 
 #include <argparse/argparse.hpp>
 #include <fmt/format.h>
-#include <lz4frame.h>
+#include <lz4.h>
