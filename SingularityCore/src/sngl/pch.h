@@ -5,6 +5,8 @@
 #include <deque>
 #include <span>
 #include <array>
+#include <cstdint>
+#include <cassert>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>

@@ -38,7 +38,14 @@
     {
       "name": "ninja-multiconfig",
       "displayName": "Ninja genreator, other toolset",
-      "binaryDir": "${sourceDir}/build/ninja"
+      "binaryDir": "${sourceDir}/build/ninja",
+      "vendor": {
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "copySourcesOptions": {
+            "exclusionList": [ ".git", "out", ".vs", "/build/" ]
+          }
+        }
+      }
     }
   ],
   "buildPresets": [

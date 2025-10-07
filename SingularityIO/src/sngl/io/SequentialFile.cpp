@@ -6,7 +6,7 @@ using namespace sngl::io;
 size_t SequentialFile::readSync(void* dest, size_t requestedSize) const
 {
 	size_t fileSize = getSize();
-	void* fileHandle = getFileHandle();
+	filehandle_t fileHandle = getFileHandle();
 	if (m_currentReadOffset + requestedSize > fileSize)
 		requestedSize = fileSize - m_currentReadOffset;
 
@@ -30,8 +30,14 @@ size_t SequentialFile::readSync(void* dest, size_t requestedSize) const
 
 	if (remaining > 0)
 		bytesRead =+ read(remaining);
+#elif defined(SNGL_BUILD_PLATFORM_UNIX)
+	ssize_t unixBytesRead = read(fileHandle, dest, requestedSize);
+	if (unixBytesRead < 0)
+		bytesRead = 0;
+
+	bytesRead = unixBytesRead;
 #else
-	#error Currently not implemented for platforms other than Windows. Please use ofstream api.
+	#error Currently not implemented for platforms other than Windows and unix. Please use ofstream api.
 #endif
 
 	return bytesRead;

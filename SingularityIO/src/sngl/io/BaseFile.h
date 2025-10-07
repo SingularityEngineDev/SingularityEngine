@@ -15,13 +15,20 @@ namespace sngl::io
 		virtual size_t readSync(void* dest, size_t requestedSize) const = 0;
 
 	protected:
+#ifdef SNGL_BUILD_PLATFORM_WINDOWS
+		using filehandle_t = void*;
+#elif defined(SNGL_BUILD_PLATFORM_UNIX)
+		using filehandle_t = int;
+#endif
+
 		inline const std::string& getPath() const { return m_path; }
-		inline void* getFileHandle() const { return m_fileHandle; }
+		inline filehandle_t getFileHandle() const { return m_fileHandle; }
 
 	private:
 		std::string m_path;
 		size_t m_fileSize;
-		void* m_fileHandle;
+
+		filehandle_t m_fileHandle;
 	};
 }
 

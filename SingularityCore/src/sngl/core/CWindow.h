@@ -13,15 +13,8 @@
 // limitations under the License.
 
 #include <sngl/core/IWindow.h>
-
-// TODO: other handles (when implementing vulkan)
-#ifdef SNGL_WINDOWS_BUILD
-    #define WIN32_LEAN_AND_MEAN
-    #include <Windows.h>
-#else
-    #define SNGL_NATIVE_WINDOW_HANDLE void*
-    #define SNGL_WINDOW_HANDLE_SDL_PROPERTY_TYPE ""
-#endif
+#include <sngl/shared/WindowsHeaders.h>
+#include <sngl/shared/UnixHeaders.h>
 
 namespace sngl::core
 {
@@ -45,6 +38,14 @@ namespace sngl::core
       };
 
    public:
+        union OSHandle_t
+        {
+            void* win32Value;
+            uint32_t x11Value;
+            void* waylandValue;
+            void* cocoaValue;
+        };
+
       CWindow(const std::string& title);
       ~CWindow();
 
@@ -57,18 +58,17 @@ namespace sngl::core
       uint32_t getWidth() const override { return m_width; }
       uint32_t getHeight() const override { return m_height; }
 
-      template <typename T>
-      T getNativeWindowHandle() const;
-
-      template <>
-      HWND getNativeWindowHandle() const
+      enum E_WINDOWDRIVER : uint8_t 
       {
-          HWND hwnd = (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(m_handle), SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
-          if (!hwnd)
-              assert(false);
+          E_WINDOWDRIVER_WINDOWS, 
+          E_WINDOWDRIVER_X11, 
+          E_WINDOWDRIVER_WAYLAND,
+          E_WINDOWDRIVER_COCOA, 
+          E_WINDOWDRIVER_UNSET = 0xff // for internal use only
+      };
 
-          return hwnd;
-      }
+      E_WINDOWDRIVER getWindowDriver() const;
+      OSHandle_t getNativeHandle() const;
 
    private:
       const SDisplay& getPrimaryDisplay();
@@ -80,5 +80,11 @@ namespace sngl::core
       uint32_t m_width, m_height;
 
       SDL_Window* m_handle;
+      mutable E_WINDOWDRIVER m_cachedWindowDriverValue =
+#ifdef SNGL_BUILD_PLATFORM_WINDOWS
+          E_WINDOWDRIVER_WINDOWS;
+#elif defined(SNGL_BUILD_PLATFORM_UNIX)
+          E_WINDOWDRIVER_UNSET;
+#endif
    };
 }
