@@ -128,7 +128,7 @@ private:
 
 	void addToToc(const std::string& archivePath, const std::string& filePath)
 	{
-		auto file = IFile::Open(filePath, IFile::IoType::IT_MAPPED);
+		auto file = std::unique_ptr<IFile>(IFile::Open(filePath, IFile::IoType::IT_MAPPED));
 		size_t filesize = file->getSize();
 		m_tocEntries.emplace_back(archivePath, filesize, m_currentBlockIndex, filePath);
 
