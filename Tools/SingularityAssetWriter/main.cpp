@@ -8,6 +8,7 @@ class Application
 private:
 	// local type aliases
 	using TocEntry = sngl::shared::sngl_pak::TocEntry;
+	using BlockInfo = sngl::shared::sngl_pak::BlockInfo;
 	using IFile = sngl::io::IFile;
 
 	// typedefs
@@ -16,8 +17,7 @@ private:
 	{
 		inline StorageTocEntry(const std::string& archivePath, size_t filesize, size_t blockIndex, const std::string& _path)
 			: TocEntry(archivePath, filesize, blockIndex), path(_path)
-		{
-		}
+		{}
 
 		std::string path;
 	} SNGL_PACK;
@@ -32,6 +32,7 @@ private:
 	std::string m_outputPath;
 	std::vector<std::string> m_filesToInclude;
 	std::vector<StorageTocEntry> m_tocEntries;
+	std::vector<BlockInfo> m_blckInfos;
 	std::ofstream m_outputFile;
 	std::vector<char> m_blockdata;
 	std::vector<char> m_lz4outbuf;
@@ -53,6 +54,8 @@ public:
 		m_currentLz4BufferSize(m_lz4outbuf.size())
 	{
 		m_tocEntries.reserve(m_filesToInclude.size());
+		m_blckInfos.reserve(m_filesToInclude.size()); // worst or best case, always less allocations :)
+		m_outputFile.write(sngl::shared::sngl_pak::MAGIC_VALUE, 4);
 	}
 
 	void run()
@@ -91,9 +94,14 @@ public:
 			m_outputFile.write(reinterpret_cast<const char*>(&toc), sizeof(TocEntry));
 		}
 
+		for (const auto& blckInfo : m_blckInfos)
+			m_outputFile.write(reinterpret_cast<const char*>(&blckInfo), sizeof(BlockInfo));
+
 		{
-			size_t entries = m_tocEntries.size();
-			m_outputFile.write(reinterpret_cast<const char*>(&entries), sizeof(size_t));
+			size_t tocEntries = m_tocEntries.size();
+			m_outputFile.write(reinterpret_cast<const char*>(&tocEntries), sizeof(size_t));
+			size_t blckEntries = m_blckInfos.size();
+			m_outputFile.write(reinterpret_cast<const char*>(&blckEntries), sizeof(size_t));
 		}
 	}
 
@@ -146,11 +154,13 @@ private:
 
 		if (m_currentBlockSize >= BLOCK_SIZE_THRESHOLD)
 		{
-			int toWrite = LZ4_compress_default(m_blockdata.data(), m_lz4outbuf.data(), m_currentBlockSize, m_currentLz4BufferSize);
-			if (toWrite == 0)
+			int compressedSize = LZ4_compress_default(m_blockdata.data(), m_lz4outbuf.data(), m_currentBlockSize, m_currentLz4BufferSize);
+			if (compressedSize == 0)
 				throw std::runtime_error(fmt::format("Failed to compress block {}", m_currentBlockIndex));
 
-			m_outputFile.write(m_lz4outbuf.data(), toWrite);
+			m_outputFile.write(m_lz4outbuf.data(), compressedSize);
+			fmt::println("Block {} written.\nUncompressed size: {}\nCompressed size: {}", m_currentBlockIndex, m_currentBlockSize, compressedSize);
+			m_blckInfos.emplace_back(m_currentBlockIndex, m_currentBlockSize, compressedSize);
 			m_currentBlockSize = BLOCK_SIZE_THRESHOLD;
 			m_currentBlockOffset = 0;
 			m_currentLz4BufferSize = DEFAULT_LZ4_OUTBUFFER_SIZE;
