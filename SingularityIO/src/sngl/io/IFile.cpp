@@ -10,6 +10,9 @@ std::unique_ptr<IFile> IFile::Open(const std::string_view path, IoType type)
 	if (type == IoType::IT_MAPPED)
 		return std::make_unique<MemoryMappedFile>(path);
 
+	if (type == IoType::IT_AUTO && GetSize(path) >= (1 << 30))
+		return std::make_unique<MemoryMappedFile>(path);
+
 	return std::make_unique<SequentialFile>(path);
 }
 

@@ -9,7 +9,7 @@ namespace sngl::io
 	class IFile
 	{
 	public:
-		enum class IoType { IT_MAPPED, IT_SEQUENTIAL };
+		enum class IoType { IT_MAPPED, IT_SEQUENTIAL, IT_AUTO };
 
 		virtual ~IFile() = default;
 
