@@ -18,6 +18,7 @@ namespace sngl::io
 		inline ~SequentialFile() override {};
 
 		size_t readSync(void* dest, size_t requestedSize) const override;
+		inline IoType getIoType() const override { return IoType::IT_SEQUENTIAL; }
 	};
 }
 

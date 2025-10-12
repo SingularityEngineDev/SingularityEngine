@@ -13,6 +13,7 @@ namespace sngl::io
 
 		inline size_t getSize() const override { return m_fileSize; };
 		virtual size_t readSync(void* dest, size_t requestedSize) const override = 0;
+		virtual IoType getIoType() const override = 0;
 
 	protected:
 #ifdef SNGL_BUILD_PLATFORM_WINDOWS

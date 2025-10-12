@@ -9,12 +9,14 @@ namespace sngl::io
 	class IFile
 	{
 	public:
+		enum class IoType { IT_MAPPED, IT_SEQUENTIAL };
+
 		virtual ~IFile() = default;
 
 		virtual size_t getSize() const = 0;
 		virtual size_t readSync(void* dest, size_t requestedSize) const = 0;
+		virtual IoType getIoType() const = 0;
 
-		enum class IoType { IT_MAPPED, IT_SEQUENTIAL };
 		SNGL_API static std::unique_ptr<IFile> Open(const std::string_view path, IoType type);
 		SNGL_API static size_t GetSize(const std::string_view path);
 	};
