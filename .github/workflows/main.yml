@@ -1,0 +1,38 @@
+name: Build
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    build:
+        name: Build project
+        strategy:
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+                conf_preset: [win64-visualstudio-clangcl, win64-visualstudio-msvc, ninja-multiconfig]
+                build_type: [Debug]
+                exclude:
+                    - os: windows-latest
+                      conf_preset: ninja-multiconfig
+                    - os: ubuntu-latest
+                      conf_preset: win64-visualstudio-clangcl
+                    - os: ubuntu-latest
+                      conf_preset: win64-visualstudio-msvc
+
+        runs-on: ${{ matrix.os }}
+        steps:
+            - name: Checkout Project
+              uses: actions/checkout@v4.2.2
+
+            - name: Install CMake
+              uses: symbitic/install-cmake@master
+            
+            - name: Configure Project
+              run: |
+                cmake --preset ${{ matrix.conf_preset }}
+
+            # - name: Build Project
+            #   run: |
+            #     cmake --build --preset ${{ matrix.conf_preset }}
+              
