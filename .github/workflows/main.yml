@@ -31,6 +31,12 @@ jobs:
               uses: ssrobins/install-cmake@v1
               with:
                 version: 4.1.2
+
+            - name: Install Xorg (Linux only)
+              if: runner.os == 'Linux'
+              run: |
+                sudo apt update
+                sudo apt install -y xorg-dev libx11-dev xserver-xorg-dev
             
             - name: Build Project
               run: |
