@@ -28,11 +28,7 @@ jobs:
             - name: Install CMake
               uses: symbitic/install-cmake@master
             
-            - name: Configure Project
+            - name: Build Project
               run: |
                 cmake --preset ${{ matrix.conf_preset }}
-
-            # - name: Build Project
-            #   run: |
-            #     cmake --build --preset ${{ matrix.conf_preset }}
-              
+                cmake --build --preset build-${{ matrix.conf_preset }}              
