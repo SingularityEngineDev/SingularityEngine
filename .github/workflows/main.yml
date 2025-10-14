@@ -24,6 +24,8 @@ jobs:
         steps:
             - name: Checkout Project
               uses: actions/checkout@v4.2.2
+              with:
+                submodules: recursive
 
             - name: Install CMake
               uses: ssrobins/install-cmake@v1
