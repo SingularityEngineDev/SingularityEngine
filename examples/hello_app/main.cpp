@@ -5,8 +5,11 @@ class HelloApp final : public sngl::core::IApplication
 private:
     using Logger_t = sngl::core::ILogger;
     using Event_t = sngl::core::IEvent;
+    using Filesystem_t = sngl::io::IFilesystem;
 
     std::unique_ptr<Logger_t> m_gameLogger;
+    Filesystem_t* m_filesystem;
+
 public:
    void onInit(sngl::core::IEngine* engine) override
    {
@@ -14,6 +17,12 @@ public:
       m_engine->getWindow().setTitle("Hello App");
       m_gameLogger = m_engine->createLogger("HelloApp");
       m_gameLogger->log(Logger_t::ELL_INFO, "Game logger created!");
+
+      m_filesystem = sngl::io::IFilesystem::Get();
+      //if (m_filesystem->mountArchive("some_path"))
+      //    m_gameLogger->log(Logger_t::ELL_INFO, "Archive mounted successfully!");
+      //else
+      //    m_gameLogger->log(Logger_t::ELL_ERROR, "Failed to mount an archive");
 
       // some event system demo
       m_engine->getEventDispatcher().subscribe(sngl::core::IEvent::EC_CORE, [this](const Event_t& event) { onCoreEvent(event); });

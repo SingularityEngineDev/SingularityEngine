@@ -9,7 +9,7 @@ namespace sngl::io
 	{
 	public:
 		IFilesystem() = default;
-		~IFilesystem() = default;
+		virtual ~IFilesystem() = default;
 
 		SNGL_API static IFilesystem* Get();
 

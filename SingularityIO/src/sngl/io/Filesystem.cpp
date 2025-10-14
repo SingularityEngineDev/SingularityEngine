@@ -1,31 +1,18 @@
-#include <sngl/io/IFilesystem.h>
+#include <sngl/io/Filesystem.h>
 
 using namespace sngl::io;
 
-namespace sngl::io
+std::unique_ptr<Filesystem> Filesystem::s_instance = nullptr;
+
+bool Filesystem::mountArchive(const std::string_view path)
 {
-	class Filesystem : public IFilesystem
-	{
-	public:
-		bool mountArchive(const std::string_view path) override
-		{
-			return true;
-		}
+	return true;
+}
 
-		static Filesystem* GetInstance()
-		{
-			if (!s_instance)
-				s_instance = std::make_unique<Filesystem>();
+IFilesystem* IFilesystem::Get()
+{
+	if (!Filesystem::s_instance)
+		Filesystem::s_instance = std::make_unique<Filesystem>();
 
-			return s_instance.get();
-		}
-
-	private:
-		static std::unique_ptr<Filesystem> s_instance;
-	};
-
-	IFilesystem* IFilesystem::Get()
-	{
-		return Filesystem::GetInstance();
-	}
-} // namespace sngl::io
+	return Filesystem::s_instance.get();
+}
