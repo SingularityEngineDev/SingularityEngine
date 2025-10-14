@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > This is WIP project I develop in my free time for mainly learning purposes, readme is also in progress
 
-## Currently working on: Virutal filesystem and custom archive format with O(1) lookup complexity
+## Currently working on: Virtual filesystem and custom archive format with O(1) lookup complexity
 
 ## Backends I plan to implement ordered by priority
 1. Direct3D 11 (in progress)
