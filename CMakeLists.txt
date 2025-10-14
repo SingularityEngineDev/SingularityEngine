@@ -44,4 +44,4 @@ add_subdirectory(SingularityCore)
 add_library(SingularityEngine INTERFACE)
 target_link_libraries(SingularityEngine INTERFACE SingularityEngine_Core SingularityEngine_IO)
 
-add_subdirectory(examples)
+add_subdirectory(examples EXCLUDE_FROM_ALL)
