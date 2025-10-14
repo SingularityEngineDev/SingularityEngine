@@ -49,6 +49,23 @@
     }
   ],
   "buildPresets": [
-
+    {
+      "name": "build-win64-visualstudio-clangcl",
+      "configurePreset": "win64-visualstudio-clangcl",
+      "inheritConfigureEnvironment": true,
+      "displayName": "Visual Studio Generator, ClangCL frontend"
+    },
+    {
+      "name": "build-win64-visualstudio-msvc",
+      "configurePreset": "win64-visualstudio-msvc",
+      "inheritConfigureEnvironment": true,
+      "displayName": "Visual Studio Generator, MSVC frontend"
+    },
+    {
+      "name": "build-ninja-multiconfig",
+      "configurePreset": "ninja-multiconfig",
+      "inheritConfigureEnvironment": true,
+      "displayName": "Ninja Generator, other toolset"
+    }
   ]
 }
