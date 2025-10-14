@@ -5,3 +5,5 @@
 #include <sngl/core/IWindow.h>
 #include <sngl/core/ILogger.h>
 #include <sngl/core/IEngine.h>
+#include <sngl/io/IFilesystem.h>
+#include <sngl/io/IFile.h>
