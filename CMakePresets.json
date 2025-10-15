@@ -25,7 +25,7 @@
       "inherits": "windows-only",
       "generator": "Visual Studio 17 2022",
       "toolset": "ClangCL",
-      "binaryDir": "${sourceDir}/build/ClangCL"
+      "binaryDir": "${sourceDir}/build/win64-visualstudio-clangcl"
     },
     {
       "name": "win64-visualstudio-msvc",
@@ -33,12 +33,12 @@
       "inherits": "windows-only",
       "generator": "Visual Studio 17 2022",
       "toolset": "v143",
-      "binaryDir": "${sourceDir}/build/MSVC"
+      "binaryDir": "${sourceDir}/build/win64-visualstudio-msvc"
     },
     {
       "name": "ninja-multiconfig",
       "displayName": "Ninja genreator, other toolset",
-      "binaryDir": "${sourceDir}/build/ninja",
+      "binaryDir": "${sourceDir}/build/ninja-multiconfig",
       "vendor": {
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
           "copySourcesOptions": {

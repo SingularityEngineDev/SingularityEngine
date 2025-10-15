@@ -21,6 +21,10 @@ jobs:
                       conf_preset: win64-visualstudio-msvc
 
         runs-on: ${{ matrix.os }}
+        defaults:
+            run:
+                shell: pwsh
+
         steps:
             - name: Checkout Project
               uses: actions/checkout@v4.2.2
@@ -32,13 +36,23 @@ jobs:
               with:
                 version: 4.1.2
 
-            - name: Install Xorg (Linux only)
+            - name: Install Dependencies (Linux only)
               if: runner.os == 'Linux'
               run: |
                 sudo apt update
-                sudo apt install -y xorg-dev libx11-dev xserver-xorg-dev
+                sudo apt install -y xorg-dev libx11-dev zstd
+
+            - name: Install Dependencies (Windows only)
+              if: runner.os == 'Windows'
+              shell: powershell
+              run: |
+                choco install -y zstd
             
             - name: Build Project
               run: |
                 cmake -S . --preset ${{ matrix.conf_preset }}
-                cmake --build --preset build-${{ matrix.conf_preset }}              
+                cmake --build --preset build-${{ matrix.conf_preset }} --target install
+              
+            - name: Compress Artifacts
+              run: |
+                tar --use-compress-program=zstd -cf singularity-$GITHUB_SHA.tar.gz build/${{ matrix.conf_preset }}/SingularityEngine . 
