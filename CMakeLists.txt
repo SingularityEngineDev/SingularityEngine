@@ -17,9 +17,9 @@ if (NOT CMAKE_CONFIGURATION_TYPES)
 	endif()
 endif()
 
-option(SNGL_DYNAMIC_RUNTIME "Use dynamic runtime" OFF)
-
 get_filename_component(SNGL_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
+get_filename_component(SNGL_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}" ABSOLUTE)
+set(SNGL_INSTALL_PATH "${SNGL_BUILD_PATH}/SingularityEngine")
 
 if (WIN32)
 	add_compile_definitions(SNGL_BUILD_PLATFORM_WINDOWS)
@@ -45,3 +45,12 @@ add_library(SingularityEngine INTERFACE)
 target_link_libraries(SingularityEngine INTERFACE SingularityEngine_Core SingularityEngine_IO)
 
 add_subdirectory(examples)
+
+install(TARGETS SingularityEngine_Core SingularityEngine_IO hello_app
+	RUNTIME DESTINATION ${SNGL_INSTALL_PATH}/bin
+	LIBRARY DESTINATION ${SNGL_INSTALL_PATH}/lib
+)
+
+install(DIRECTORY ${SNGL_ROOT_PATH}/SingularityCore/include/ DESTINATION ${SNGL_INSTALL_PATH}/lib/include)
+install(DIRECTORY ${SNGL_ROOT_PATH}/SingularityIO/include/ DESTINATION ${SNGL_INSTALL_PATH}/lib/include)
+install(DIRECTORY ${SNGL_ROOT_PATH}/SingularitySharedHeaders/include/ DESTINATION ${SNGL_INSTALL_PATH}/lib/include)
