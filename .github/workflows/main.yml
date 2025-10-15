@@ -56,7 +56,7 @@ jobs:
             - name: Compress Artifacts
               run: |
                 $absPath = (Get-Location).Path
-                $archiveFilename = singularity-${{ matrix.conf_preset }}-${{ github.sha }}.tar.gz
+                $archiveFilename = "singularity-${{ matrix.conf_preset }}-${{ github.sha }}.tar.gz"
                 $archivePath = Join-Path $absPath $archiveFilename
                 Write-Host Compressing archive at $archivePath
                 tar --use-compress-program=zstd -cf $archivePath build/${{ matrix.conf_preset }}/SingularityEngine build/${{ matrix.conf_preset }}/SingularityEngine
