@@ -55,7 +55,8 @@ jobs:
               
             - name: Compress Artifacts
               run: |
-                tar --use-compress-program=zstd -cf singularity-${{ matrix.conf_preset }}-${{ github.sha }}.tar.gz build/${{ matrix.conf_preset }}/SingularityEngine .
+                $ARCHIVE = Join-Path $env:GITHUB_WORKSPACE singularity-${{ matrix.conf_preset }}-${{ github.sha }}.tar.gz
+                tar --use-compress-program=zstd -cf $ARCHIVE build/${{ matrix.conf_preset }}/SingularityEngine .
                 
             - name: Upload Artifact
               uses: actions/upload-artifact@v4
