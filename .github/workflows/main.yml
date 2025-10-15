@@ -46,7 +46,7 @@ jobs:
               if: runner.os == 'Windows'
               shell: powershell
               run: |
-                choco install -y zstd
+                choco install -y zstandard
             
             - name: Build Project
               run: |
