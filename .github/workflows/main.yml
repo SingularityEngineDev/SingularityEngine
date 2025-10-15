@@ -58,8 +58,9 @@ jobs:
                 $absPath = (Get-Location).Path
                 $archiveFilename = "singularity-${{ matrix.conf_preset }}-${{ github.sha }}.tar.gz"
                 $archivePath = Join-Path $absPath $archiveFilename
-                Write-Host Compressing archive at $archivePath
-                tar --use-compress-program=zstd -cf $archivePath build/${{ matrix.conf_preset }}/SingularityEngine build/${{ matrix.conf_preset }}/SingularityEngine
+                $buildPath = Join-Path $absPath build/${{ matrix.conf_preset}}/SingularityEngine 
+                Write-Host Compressing $buildPath at $archivePath
+                tar -cf - -C $buildPath . | zstd -19 -T0 -o $archivePath
                 
             - name: Upload Artifact
               uses: actions/upload-artifact@v4
