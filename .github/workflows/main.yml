@@ -58,7 +58,7 @@ jobs:
                 tar --use-compress-program=zstd -cf singularity-$GITHUB_SHA.tar.gz build/${{ matrix.conf_preset }}/SingularityEngine .
                 
             - name: Upload Artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: Singularity Engine
                 path: singularity-*.tar.gz
