@@ -44,7 +44,7 @@ add_subdirectory(SingularityCore)
 add_library(SingularityEngine INTERFACE)
 target_link_libraries(SingularityEngine INTERFACE SingularityEngine_Core SingularityEngine_IO)
 
-add_subdirectory(examples EXCLUDE_FROM_ALL)
+add_subdirectory(examples)
 
 install(TARGETS SingularityEngine_Core SingularityEngine_IO hello_app
 	RUNTIME DESTINATION ${SNGL_INSTALL_PATH}/bin
