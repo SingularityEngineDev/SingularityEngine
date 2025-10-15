@@ -55,10 +55,10 @@ jobs:
               
             - name: Compress Artifacts
               run: |
-                tar --use-compress-program=zstd -cf singularity-$GITHUB_SHA.tar.gz build/${{ matrix.conf_preset }}/SingularityEngine .
+                tar --use-compress-program=zstd -cf singularity-${{ matrix.conf_preset }}-${{ github.sha }}.tar.gz build/${{ matrix.conf_preset }}/SingularityEngine .
                 
             - name: Upload Artifact
               uses: actions/upload-artifact@v4
               with:
                 name: Singularity Engine
-                path: singularity-*.tar.gz
+                path: singularity-${{ matrix.conf_preset }}-${{ github.sha }}.tar.gz
