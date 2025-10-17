@@ -11,9 +11,9 @@ namespace sngl::io
 		IFilesystem() = default;
 		virtual ~IFilesystem() = default;
 
-		SNGL_API static IFilesystem* Get();
-
 		virtual bool mountArchive(const std::string_view path) = 0;
+
+		SNGL_API static IFilesystem* create();
 	};
 }
 

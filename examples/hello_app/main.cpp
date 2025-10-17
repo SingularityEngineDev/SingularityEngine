@@ -8,9 +8,13 @@ private:
     using Filesystem_t = sngl::io::IFilesystem;
 
     std::unique_ptr<Logger_t> m_gameLogger;
-    Filesystem_t* m_filesystem;
+    std::unique_ptr<Filesystem_t> m_filesystem;
 
 public:
+    inline HelloApp()
+        : m_filesystem(sngl::io::IFilesystem::create())
+    { }
+
    void onInit(sngl::core::IEngine* engine) override
    {
       IApplication::onInit(engine);
@@ -18,7 +22,6 @@ public:
       m_gameLogger = m_engine->createLogger("HelloApp");
       m_gameLogger->log(Logger_t::ELL_INFO, "Game logger created!");
 
-      m_filesystem = sngl::io::IFilesystem::Get();
       //if (m_filesystem->mountArchive("some_path"))
       //    m_gameLogger->log(Logger_t::ELL_INFO, "Archive mounted successfully!");
       //else

@@ -9,10 +9,6 @@ namespace sngl::io
 	{
 	public:
 		bool mountArchive(const std::string_view path) override;
-
-	private:
-		friend IFilesystem* IFilesystem::Get();
-		static std::unique_ptr<Filesystem> s_instance;
 	};
 }
 
