@@ -11,3 +11,8 @@ bool Filesystem::mountArchive(const std::string_view path)
 {
 	return true;
 }
+
+bool Filesystem::openFile(const std::string_view path, const std::string_view mountPath)
+{
+	return true;
+}

@@ -12,6 +12,7 @@ namespace sngl::io
 		virtual ~IFilesystem() = default;
 
 		virtual bool mountArchive(const std::string_view path) = 0;
+		virtual bool openFile(const std::string_view path, const std::string_view mountPath) = 0;
 
 		SNGL_API static IFilesystem* create();
 	};

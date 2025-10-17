@@ -9,6 +9,7 @@ namespace sngl::io
 	{
 	public:
 		bool mountArchive(const std::string_view path) override;
+		bool openFile(const std::string_view path, const std::string_view mountPath) override;
 	};
 }
 
