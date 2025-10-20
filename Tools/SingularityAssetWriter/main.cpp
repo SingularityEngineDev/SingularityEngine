@@ -77,7 +77,7 @@ public:
 			{
 				if (entry.is_directory())
 					continue;
-
+				
 				files.emplace_back(entry.path().generic_string(), fs::relative(entry, path).generic_string());
 			}
 		}
@@ -116,6 +116,47 @@ public:
 
 		return 0;
 	}
+
+	int ls(const std::string& archivePath)
+	{
+		std::ifstream archive(archivePath, std::ios::binary);
+		archive.seekg(0);
+
+		ArchiveHeader header;
+		archive.read((char*)&header, sizeof(header));
+
+		if (header.magic != ArchiveHeader::MAGIC_VALUE)
+		{
+			fmt::println("Failed to open {}. Invalid file format detected.", archivePath);
+			return -1;
+		}
+
+		std::string info = fmt::format("Archive: {}\nMagic: {}\nVersion: 0x{:x}\nFiles: {}\nFiletable Offset: 0x{:x}\nData Offset: 0x{:x}\n\n", 
+			archivePath,
+			reinterpret_cast<const char*>(&header.magic),
+			header.version,
+			header.filecount,
+			header.filetableOffset,
+			header.dataOffset
+		);
+
+		std::vector<FileEntry> fileEntries(header.filecount);
+		archive.seekg(header.filetableOffset);
+		archive.read((char*)fileEntries.data(), header.filecount * sizeof(FileEntry));
+
+		for (const auto& entry : fileEntries)
+		{
+			info += fmt::format("\t{}----\\\n\t\tBlocks: {}\n\t\tStart block offset: {}\n\t\tOffset in block: {}\n\n", 
+				entry.path, 
+				entry.blockCount, 
+				entry.startBlockOffset, 
+				entry.startBlockDataOffset
+			);
+		}
+
+		std::cout << info << "\n";
+		return 0;
+	}
 };
 
 int main(int argc, char** argv)
@@ -135,6 +176,15 @@ int main(int argc, char** argv)
 
 	program.add_subparser(make_parser);
 
+	// ls
+	argparse::ArgumentParser ls_parser("ls");
+
+	ls_parser.add_argument("archive")
+		.nargs(1)
+		.required();
+
+	program.add_subparser(ls_parser);
+
 	try
 	{
 		program.parse_args(argc, argv);
@@ -148,6 +198,8 @@ int main(int argc, char** argv)
 	Application app;
 	if (program.is_subcommand_used(make_parser))
 		return app.make(make_parser.get("archive"), make_parser.get<std::vector<std::string>>("files"));
+	else if (program.is_subcommand_used(ls_parser))
+		return app.ls(ls_parser.get("archive"));
 	else
 		std::cout << program << "\n";
 
