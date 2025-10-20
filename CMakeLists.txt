@@ -45,9 +45,10 @@ target_link_libraries(SingularityEngine INTERFACE SingularityEngine_Core)
 
 add_subdirectory(examples)
 
-install(TARGETS SingularityEngine_Core hello_app
+install(TARGETS SingularityEngine_Core hello_app SingularityAssetWriter
 	RUNTIME DESTINATION ${SNGL_INSTALL_PATH}/bin
 	LIBRARY DESTINATION ${SNGL_INSTALL_PATH}/lib
+	ARCHIVE DESTINATION ${SNGL_INSTALL_PATH}/lib
 )
 
 install(DIRECTORY ${SNGL_ROOT_PATH}/SingularityCore/include/ DESTINATION ${SNGL_INSTALL_PATH}/lib/include)
