@@ -5,16 +5,10 @@ class HelloApp final : public sngl::core::IApplication
 private:
     using Logger_t = sngl::core::ILogger;
     using Event_t = sngl::core::IEvent;
-    using Filesystem_t = sngl::io::IFilesystem;
 
     std::unique_ptr<Logger_t> m_gameLogger;
-    std::unique_ptr<Filesystem_t> m_filesystem;
 
 public:
-    inline HelloApp()
-        : m_filesystem(sngl::io::IFilesystem::create())
-    { }
-
    void onInit(sngl::core::IEngine* engine) override
    {
       IApplication::onInit(engine);
