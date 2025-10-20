@@ -14,6 +14,9 @@ macro(singularity_addsubmodule SNGL_ADDSBMD_TARGET_NAME)
 
 	list(APPEND SNGL_REGISTERED_SUBMODULES ${SNGL_ADDSBMD_TARGET_NAME})
 	set(SNGL_REGISTERED_SUBMODULES "${SNGL_REGISTERED_SUBMODULES}" CACHE INTERNAL "")
+
+	# install to lib/
+	install(TARGETS ${SNGL_ADDSBMD_TARGET_NAME} DESTINATION ${SNGL_INSTALL_PATH}/lib)
 endmacro()
 
 function(singularity_copyenginedependencies TARGET_NAME)
