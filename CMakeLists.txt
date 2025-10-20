@@ -38,19 +38,18 @@ add_subdirectory(SingularitySharedHeaders)
 
 include(cmake/BuildsystemUtilities.cmake)
 add_subdirectory(Tools)
-add_subdirectory(SingularityIO)
 add_subdirectory(SingularityCore)
 
 add_library(SingularityEngine INTERFACE)
-target_link_libraries(SingularityEngine INTERFACE SingularityEngine_Core SingularityEngine_IO)
+target_link_libraries(SingularityEngine INTERFACE SingularityEngine_Core)
 
 add_subdirectory(examples)
 
-install(TARGETS SingularityEngine_Core SingularityEngine_IO hello_app
+install(TARGETS SingularityEngine_Core hello_app SingularityAssetWriter
 	RUNTIME DESTINATION ${SNGL_INSTALL_PATH}/bin
 	LIBRARY DESTINATION ${SNGL_INSTALL_PATH}/lib
+	ARCHIVE DESTINATION ${SNGL_INSTALL_PATH}/lib
 )
 
 install(DIRECTORY ${SNGL_ROOT_PATH}/SingularityCore/include/ DESTINATION ${SNGL_INSTALL_PATH}/lib/include)
-install(DIRECTORY ${SNGL_ROOT_PATH}/SingularityIO/include/ DESTINATION ${SNGL_INSTALL_PATH}/lib/include)
 install(DIRECTORY ${SNGL_ROOT_PATH}/SingularitySharedHeaders/include/ DESTINATION ${SNGL_INSTALL_PATH}/lib/include)
