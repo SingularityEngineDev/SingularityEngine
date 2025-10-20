@@ -78,7 +78,7 @@ public:
 				if (entry.is_directory())
 					continue;
 
-				files.emplace_back(entry.path().generic_string());
+				files.emplace_back(fs::relative(entry, path).generic_string());
 			}
 		}
 
