@@ -62,23 +62,23 @@ private:
 	};
 
 public:
-	void make(const std::string& archivePath, const std::vector<std::string>& paths)
+	int make(const std::string& archivePath, const std::vector<std::string>& paths)
 	{
-		std::vector<std::string> files;
+		std::vector<std::pair<const std::string, std::string>> files;
 		MakeContext ctx(archivePath);
 		files.reserve(paths.size()); // reduce allocations, best case scenario 
 
 		for (const auto& path : paths)
 		{
 			if (not fs::is_directory(path))
-				files.emplace_back(path);
+				files.emplace_back(path, fs::path(path).filename().string());
 
 			for (const auto& entry : fs::recursive_directory_iterator(path))
 			{
 				if (entry.is_directory())
 					continue;
 
-				files.emplace_back(fs::relative(entry, path).generic_string());
+				files.emplace_back(entry.path().generic_string(), fs::relative(entry, path).generic_string());
 			}
 		}
 
@@ -90,14 +90,14 @@ public:
 			const auto& path = files[i];
 			auto& entry = ctx.entries[i];
 			std::memset(&entry, 0, sizeof(entry));
-			std::ifstream file(path, std::ios::binary);
+			std::ifstream file(path.first, std::ios::binary);
 
 			entry.startBlockOffset = ctx.outFile.tellp();
 			entry.startBlockDataOffset = ctx.currentBlockOffset;
 			entry.blockCount = 1;
-			std::memcpy(entry.path, path.data(), path.size());
+			std::memcpy(entry.path, path.second.data(), path.second.size());
 
-			fmt::println("Processing: {}", path);
+			fmt::println("Processing: {}", path.first);
 
 			while (file)
 			{
@@ -113,6 +113,8 @@ public:
 
 			ctx.writeEntry(i);
 		}
+
+		return 0;
 	}
 };
 
@@ -121,6 +123,7 @@ int main(int argc, char** argv)
 	argparse::ArgumentParser program("SingularityAssetWriter");
 	
 	// subcommands
+	// make
 	argparse::ArgumentParser make_parser("make");
 
 	make_parser.add_argument("archive")
@@ -144,7 +147,7 @@ int main(int argc, char** argv)
 
 	Application app;
 	if (program.is_subcommand_used(make_parser))
-		app.make(make_parser.get("archive"), make_parser.get<std::vector<std::string>>("files"));
+		return app.make(make_parser.get("archive"), make_parser.get<std::vector<std::string>>("files"));
 	else
 		std::cout << program << "\n";
 
