@@ -5,11 +5,9 @@ set_target_properties(SingularityAssetWriter PROPERTIES
 )
 
 target_link_libraries(SingularityAssetWriter 
-	PRIVATE SingularityEngine_SharedHeaders SingularityEngine_IO argparse::argparse fmt::fmt-header-only lz4_static
+	PRIVATE SingularityEngine_SharedHeaders argparse::argparse fmt::fmt-header-only lz4_static
 )
 
 target_precompile_headers(SingularityAssetWriter 
 	PRIVATE pch.h
 )
-
-singularity_copyenginedependencies(SingularityAssetWriter SingularityEngine_IO)

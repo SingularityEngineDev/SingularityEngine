@@ -1,187 +1,166 @@
-#include <sngl/shared/SnglPak/structs.h>
-#include <sngl/io/IFile.h>
-
 namespace fs = std::filesystem;
+
+struct alignas(8) ArchiveHeader
+{
+	static constexpr uint64_t DEFAULT_BLOCKSIZE = (1 << 14);
+	static constexpr uint32_t MAGIC_VALUE = 0x4B415053;
+	static constexpr uint16_t CURRENT_VERSION = 0x0010;
+
+	ArchiveHeader()
+		: magic(MAGIC_VALUE), 
+		version(CURRENT_VERSION),
+		blockSize(DEFAULT_BLOCKSIZE),
+		filetableOffset(sizeof(ArchiveHeader))
+	{ }
+
+	uint32_t magic;
+	uint16_t version;
+	uint16_t reserved;
+	uint64_t blockSize;
+	uint64_t filecount;
+	uint64_t filetableOffset;
+	uint64_t dataOffset;
+};
+
+struct alignas(8) FileEntry
+{
+	char path[256];
+	uint64_t blockCount;
+	uint64_t startBlockOffset;
+	uint64_t startBlockDataOffset;
+};
+
+static_assert(sizeof(ArchiveHeader) == 40);
+static_assert(sizeof(FileEntry) == 280);
 
 class Application
 {
 private:
-	// local type aliases
-	using TocEntry = sngl::shared::sngl_pak::TocEntry;
-	using BlockInfo = sngl::shared::sngl_pak::BlockInfo;
-	using IFile = sngl::io::IFile;
+	using path_t = fs::path;
 
-	// typedefs
-	SNGL_BEGIN_PACK
-		struct StorageTocEntry : TocEntry
+	struct MakeContext
 	{
-		inline StorageTocEntry(const std::string& archivePath, size_t filesize, size_t blockIndex, const std::string& _path)
-			: TocEntry(archivePath, filesize, blockIndex), path(_path)
-		{}
+		inline MakeContext(const std::string& outFilePath)
+			: outFile(outFilePath, std::ios::binary | std::ios::trunc),
+			header(),
+			currentBlockOffset(0),
+			currentDataOffset(0),
+			blockBuffer(header.blockSize),
+			compressedBlockBuffer(LZ4_COMPRESSBOUND(header.blockSize))
+		{ }
+		
+		inline void setFileCountAndCalculateOffsets(uint64_t filecount)
+		{
+			header.filecount = filecount;
+			entries.resize(filecount);
 
-		std::string path;
-	} SNGL_PACK;
-	SNGL_END_PACK
+			header.dataOffset = filecount * sizeof(FileEntry);
+		}
 
-	// constants
-	static constexpr size_t BLOCK_SIZE_THRESHOLD = (1 << 18);
-	static constexpr size_t DEFAULT_LZ4_OUTBUFFER_SIZE = LZ4_COMPRESSBOUND(BLOCK_SIZE_THRESHOLD);
+		void commitBlock()
+		{
+			int compressedSize = LZ4_compress_default(
+				blockBuffer.data(), 
+				compressedBlockBuffer.data(),
+				static_cast<int>(header.blockSize), 
+				static_cast<int>(compressedBlockBuffer.size())
+			);
 
+			outFile.write(reinterpret_cast<const char*>(&compressedSize), sizeof(decltype(compressedSize)));
+			outFile.write(compressedBlockBuffer.data(), compressedSize);
+			currentBlockOffset = 0;
+		}
 
-	// data
-	std::string m_outputPath;
-	std::vector<std::string> m_filesToInclude;
-	std::vector<StorageTocEntry> m_tocEntries;
-	std::vector<BlockInfo> m_blckInfos;
-	std::ofstream m_outputFile;
-	std::vector<char> m_blockdata;
-	std::vector<char> m_lz4outbuf;
-	size_t m_currentBlockIndex;
-	size_t m_currentBlockSize;
-	size_t m_currentBlockOffset;
-	size_t m_currentLz4BufferSize;
+		void writeEntry(uint64_t index)
+		{
+			uint64_t fileOffset = header.filetableOffset + index * sizeof(FileEntry);
+			uint64_t currentFileOffset = outFile.tellp();
+			outFile.seekp(fileOffset);
+			outFile.write(reinterpret_cast<const char*>(entries.data() + index), sizeof(FileEntry));
+			outFile.seekp(currentFileOffset);
+		}
+
+		std::ofstream outFile;
+
+		ArchiveHeader header;
+		std::vector<FileEntry> entries;
+
+		uint64_t currentBlockOffset;
+		uint64_t currentDataOffset;
+		std::vector<char> blockBuffer;
+		std::vector<char> compressedBlockBuffer;
+	};
 
 public:
-	Application(std::string&& outputPath, std::vector<std::string>&& filesToInclude)
-		: m_outputPath(std::move(outputPath)), 
-		m_filesToInclude(std::move(filesToInclude)), 
-		m_outputFile(m_outputPath, std::ios::binary | std::ios::trunc),
-		m_blockdata(BLOCK_SIZE_THRESHOLD),
-		m_lz4outbuf(DEFAULT_LZ4_OUTBUFFER_SIZE),
-		m_currentBlockIndex(0),
-		m_currentBlockSize(m_blockdata.size()),
-		m_currentBlockOffset(0),
-		m_currentLz4BufferSize(m_lz4outbuf.size())
+	void make(const std::string& archivePath, const std::vector<std::string>& paths)
 	{
-		m_tocEntries.reserve(m_filesToInclude.size());
-		m_blckInfos.reserve(m_filesToInclude.size()); // worst or best case, always less allocations :)
-		m_outputFile.write(sngl::shared::sngl_pak::MAGIC_VALUE, 4);
-	}
+		std::vector<std::string> files;
+		MakeContext ctx(archivePath);
+		files.reserve(paths.size()); // reduce allocations, best case scenario 
 
-	void run()
-	{
-		for (const auto& path : m_filesToInclude)
+		for (const auto& path : paths)
 		{
-			fmt::println("Processing {}", path);
+			if (not fs::is_directory(path))
+				files.emplace_back(path);
 
-			if (!fs::exists(path))
-			{
-				fmt::println("Skipping {}. File doesn't exist.", path);
-				continue;
-			}
-
-			if (!fs::is_directory(path))
-			{
-				addFile(path);
-				continue;
-			}
-
-			std::string root = fs::path(path).parent_path().generic_string();
 			for (const auto& entry : fs::recursive_directory_iterator(path))
 			{
 				if (entry.is_directory())
 					continue;
 
-				std::string p = entry.path().generic_string();
-				fmt::println("Processing {}", p);
-				addDirectoryFile(p, root);
+				files.emplace_back(entry.path().generic_string());
 			}
 		}
 
-		for (const auto& entry : m_tocEntries)
+		ctx.setFileCountAndCalculateOffsets(files.size());
+		ctx.outFile.write(reinterpret_cast<const char*>(&ctx.header), sizeof(ctx.header));
+
+		for (uint64_t i = 0; i < ctx.header.filecount; i++)
 		{
-			TocEntry toc = static_cast<TocEntry>(entry);
-			m_outputFile.write(reinterpret_cast<const char*>(&toc), sizeof(TocEntry));
-		}
+			const auto& path = files[i];
+			auto& entry = ctx.entries[i];
+			std::memset(&entry, 0, sizeof(entry));
+			std::ifstream file(path, std::ios::binary);
 
-		for (const auto& blckInfo : m_blckInfos)
-			m_outputFile.write(reinterpret_cast<const char*>(&blckInfo), sizeof(BlockInfo));
+			entry.startBlockOffset = ctx.outFile.tellp();
+			entry.startBlockDataOffset = ctx.currentBlockOffset;
+			entry.blockCount = 1;
+			std::memcpy(entry.path, path.data(), path.size());
 
-		{
-			size_t tocEntries = m_tocEntries.size();
-			m_outputFile.write(reinterpret_cast<const char*>(&tocEntries), sizeof(size_t));
-			size_t blckEntries = m_blckInfos.size();
-			m_outputFile.write(reinterpret_cast<const char*>(&blckEntries), sizeof(size_t));
-		}
-	}
+			fmt::println("Processing: {}", path);
 
-private:
-	// for standalone files
-	void addFile(const std::string& path)
-	{
-		fs::path p(path);
-		assert(!fs::is_directory(p));
-		assert(p.has_filename());
+			while (file)
+			{
+				file.read(ctx.blockBuffer.data(), ctx.header.blockSize - ctx.currentBlockOffset);
+				ctx.currentBlockOffset += file.gcount();
 
-		addToToc(p.filename().generic_string(), path);
+				if (ctx.currentBlockOffset == ctx.header.blockSize)
+				{
+					ctx.commitBlock();
+					entry.blockCount++;
+				}
+			}
 
-	}
-
-	// for files inside directories
-	void addDirectoryFile(const std::string& path, const std::string& root)
-	{
-		assert(!fs::is_directory(path));
-		
-		std::string archivePath = fs::relative(path, root).generic_string();
-		addToToc(archivePath, path);
-	}
-
-	void addToToc(const std::string& archivePath, const std::string& filePath)
-	{
-		auto file = std::unique_ptr<IFile>(IFile::Open(filePath, IFile::IoType::IT_MAPPED));
-		size_t filesize = file->getSize();
-		m_tocEntries.emplace_back(archivePath, filesize, m_currentBlockIndex, filePath);
-
-		// fill the block data with file data, if current block size + current file size exceeds the threshold,
-		// compress the block, write compressed data to the file and create a new block
-		if (m_currentBlockSize + filesize > m_blockdata.size())
-		{
-			m_currentBlockSize += filesize;
-			m_currentLz4BufferSize = LZ4_compressBound(m_currentBlockSize);
-			m_lz4outbuf.resize(m_currentLz4BufferSize);
-			m_blockdata.resize(m_currentBlockSize);
-		}
-
-		// write file contents to archive, TOC is written at the end
-		while (true)
-		{
-			size_t readSize = file->readSync(m_blockdata.data() + m_currentBlockOffset, filesize);
-			if (readSize == 0)
-				break;
-
-			m_currentBlockOffset += readSize;
-		}
-
-		if (m_currentBlockSize >= BLOCK_SIZE_THRESHOLD)
-		{
-			int compressedSize = LZ4_compress_default(m_blockdata.data(), m_lz4outbuf.data(), m_currentBlockSize, m_currentLz4BufferSize);
-			if (compressedSize == 0)
-				throw std::runtime_error(fmt::format("Failed to compress block {}", m_currentBlockIndex));
-
-			m_outputFile.write(m_lz4outbuf.data(), compressedSize);
-			fmt::println("Block {} written.\nUncompressed size: {}\nCompressed size: {}", m_currentBlockIndex, m_currentBlockSize, compressedSize);
-			m_blckInfos.emplace_back(m_currentBlockIndex, m_currentBlockSize, compressedSize);
-			m_currentBlockSize = BLOCK_SIZE_THRESHOLD;
-			m_currentBlockOffset = 0;
-			m_currentLz4BufferSize = DEFAULT_LZ4_OUTBUFFER_SIZE;
-			m_currentBlockIndex++;
+			ctx.writeEntry(i);
 		}
 	}
 };
 
 int main(int argc, char** argv)
 {
-	// parse arguments
-	argparse::ArgumentParser program("SingularityAssetWriter", "1.0");
-	program.add_argument("-o", "--output")
-		.nargs(1)
-		.default_value("output.pak")
-		.help("Output path");
+	argparse::ArgumentParser program("SingularityAssetWriter");
+	
+	// subcommands
+	argparse::ArgumentParser make_parser("make");
 
-	program.add_argument("files")
+	make_parser.add_argument("archive")
+		.nargs(1)
+		.required();
+	make_parser.add_argument("files")
 		.nargs(argparse::nargs_pattern::at_least_one)
-		.required()
-		.help("List of files to include in the asset package");
+		.required();
+
+	program.add_subparser(make_parser);
 
 	try
 	{
@@ -189,26 +168,15 @@ int main(int argc, char** argv)
 	}
 	catch (const std::runtime_error& e)
 	{
-		fmt::println("{}\n\n{}", e.what(), program.help().str());
+		std::cout << e.what() << "\n" << program << "\n";
 		return -1;
 	}
 
-	std::string outputPath = program.get<std::string>("-o");
-	std::vector<std::string> filesToInclude = program.get<std::vector<std::string>>("files");
-
-	fmt::print("Writing assets to: {}\n", outputPath);
-
-	Application app(std::move(outputPath), std::move(filesToInclude));
-
-	try
-	{
-		app.run();
-	}
-	catch (const std::runtime_error& e)
-	{
-		fmt::println("Application error: {}", e.what());
-		return -1;
-	}
+	Application app;
+	if (program.is_subcommand_used(make_parser))
+		app.make(make_parser.get("archive"), make_parser.get<std::vector<std::string>>("files"));
+	else
+		std::cout << program << "\n";
 
 	return 0;
 }
